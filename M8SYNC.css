@@ -1,0 +1,171 @@
+/* CSS for M8SYNC */
+body {
+    font-family: "Nunito", sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f7f3f1;
+    color: #444;
+    line-height: 1.6;
+}
+
+body>h1,
+#nav,
+.page {
+    max-width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Page card */
+.page {
+    background: #ffffff;
+    padding: 35px 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    margin-top: 18px;
+}
+
+/* Headings */
+h1 {
+    text-align: center;
+    font-size: 2.2em;
+}
+
+h2 {
+    color: #5d4037;
+    border-bottom: 1px solid #e0c8c0;
+    padding-bottom: 8px;
+}
+
+/* NAV */
+#nav {
+    background: #fffaf7;
+    border: 1px solid #f0e0d8;
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+/* NAV BUTTONS */
+#nav input[type="button"] {
+    padding: 8px 18px;
+    border: 1px solid #d4c0b4;
+    border-radius: 25px;
+    background: #fff;
+    color: #5d4037;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+#nav input[type="button"]:hover {
+    background: #f7f3f1;
+    transform: translateY(-1px);
+}
+
+/* AUTH STATUS BAR */
+.auth-status {
+    max-width: 960px;
+    margin: 15px auto;
+    padding: 12px;
+    border-radius: 12px;
+    background: #fffaf7;
+    border: 1px solid #f0e0d8;
+    text-align: center;
+    font-weight: 600;
+    color: #5d4037;
+}
+
+/* AUTH BUTTONS */
+.auth-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.auth-toggle-btn {
+    padding: 10px 18px;
+    border-radius: 25px;
+    border: 1px solid #d4c0b4;
+    background: #fffaf7;
+    color: #5d4037;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.25s;
+}
+
+.auth-toggle-btn:hover {
+    background: #f7f3f1;
+    transform: translateY(-1px);
+}
+
+/* AUTH FORM BOX */
+.auth-panel {
+    margin-top: 18px;
+    max-width: 360px;
+    padding: 20px;
+    border-radius: 12px;
+    background: #fffaf7;
+    border: 1px solid #f0e0d8;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+/* INPUTS (THIS FIXES YOUR ISSUE) */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+select,
+textarea {
+    width: calc(100% - 26px);
+    max-width: 560px;
+    padding: 12px;
+    border: 1px solid #d4c0b4;
+    border-radius: 8px;
+    font-size: 0.95em;
+    background: #fff;
+}
+
+/* FOCUS */
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: #b88a8d;
+    box-shadow: 0 0 0 3px rgba(184, 138, 141, 0.18);
+}
+
+/* BUTTONS */
+input[type="button"],
+input[type="submit"] {
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: none;
+    background: #d4c0b4;
+    color: #5d4037;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+input[type="button"]:hover,
+input[type="submit"]:hover {
+    background: #b8a090;
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* MESSAGE */
+.auth-message {
+    margin-top: 14px;
+    color: #7b584d;
+    font-weight: 500;
+}
+
+/* MOBILE */
+@media (max-width: 650px) {
+    .page {
+        padding: 20px;
+    }
+}

@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>M8SYNC</title>
+    <link rel="stylesheet" href="M8SYNC.css">
+</head>
+
+<body>
+    <h1>.𖥔 ݁ Welcome to M8SYNC ˖๋ ࣭ ⭑</h1>
+
+    <!--Nav buttons-->
+    <div id="nav">
+        <input type="button" value="Home" onclick="showPage('home')">
+        <input type="button" value="Questionnaire" onclick="requireLogin('questionnaire')">
+        <input type="button" value="Matches" onclick="requireLogin('matches')">
+        <input type="button" value="Messages" onclick="requireLogin('messages')">
+        <input type="button" value="Contact Me" onclick="showPage('contact')">
+        <input type="button" value="Logout" onclick="logoutUser()"> 
+    </div>
+
+    <!--Home Page-->
+    <div id="home" class="page">
+        <h2>Discover your roommate match!</h2>
+        <p>Welcome to M8SYNC - a platform where you can find your ideal roommate.</p>
+        <br>
+        <div id="authCard" class="auth-card">
+
+        <!-- NOT LOGGED IN -->
+        <div id="loggedOutView">
+            <p>Please log in or create an account to access the full features of M8SYNC.</p>
+
+            <div class="auth-actions">
+                <input type="button" value="Create Account" class="auth-toggle-btn" onclick="toggleAuthForm('signupForm')">
+                <input type="button" value="Login" class="auth-toggle-btn" onclick="toggleAuthForm('loginForm')">
+            </div>
+
+            <div id="signupForm" class="auth-panel" style="display:none;">
+                <h3>Create Account</h3>
+                <input type="email" id="signupEmail" placeholder="Email"><br><br>
+                <input type="password" id="signupPassword" placeholder="Password"><br><br>
+                <input type="button" value="Sign Up" onclick="signUpUser()">
+            </div>
+
+            <div id="loginForm" class="auth-panel" style="display:none;">
+                <h3>Login</h3>
+                <input type="email" id="loginEmail" placeholder="Email"><br><br>
+                <input type="password" id="loginPassword" placeholder="Password"><br><br>
+                <input type="button" value="Login" onclick="loginUser()">
+            </div>
+        </div>
+
+        <!-- LOGGED IN -->
+        <div id="loggedInView" style="display:none;">
+            <p id="userEmail"></p>
+
+            <div class="auth-actions">
+                <input type="button" value="I'm ready ! ⤷ ゛ ˎˊ˗" id="btnStart" onclick="requireLogin('questionnaire')">
+                <input type="button" value="Logout" onclick="logoutUser()">
+            </div>
+        </div>
+
+        <div id="authMessage" class="auth-message"></div>
+
+        </div>
+    </div>
+
+    <!--Questionnaire Page-->
+    <div id="questionnaire" class="page" style="display:none;">
+        <h2>🫧 Lifestyle Questionnaire</h2>
+        <p>Fill out your preferences to help us find your ideal match: </p>
+
+        <!-- Questionnaire Form -->
+         <form id="questionnarieForm">
+            Name: <br>
+            <input type="text" id="userName"><br><br>
+
+            Age: <br>
+            <input type="number" id="userAge"><br><br>
+
+            Gender: <br>
+            <select id="userGender">
+                <option value="">Select</option>
+                <option value="female">Female</option>
+                <option value="male">Male</option>
+                <option value="nonbinary">Non-binary</option>
+                <option value="preferNot">Prefer not to say</option>
+            </select><br><br>
+
+            College / School (optional):<br>
+            <input type="text" id="userCollege" placeholder="Optional"><br><br>
+
+            Preferred Location:<br>
+            <select id="userLocation">
+                <option value="">Select</option>
+                <option value="Manhattan">Manhattan</option>
+                <option value="Brooklyn">Brooklyn</option>
+                <option value="Queens">Queens</option>
+                <option value="Bronx">Bronx</option>
+                <option value="Staten Island">Staten Island</option>
+                <option value="Upper East Side">Upper East Side</option>
+                <option value="Upper West Side">Upper West Side</option>
+                <option value="Midtown">Midtown</option>
+                <option value="Chelsea">Chelsea</option>
+                <option value="East Village">East Village</option>
+                <option value="West Village">West Village</option>
+                <option value="Financial District">Financial District</option>
+                <option value="Harlem">Harlem</option>
+                <option value="Williamsburg">Williamsburg</option>
+                <option value="Bushwick">Bushwick</option>
+                <option value="Park Slope">Park Slope</option>
+                <option value="Astoria">Astoria</option>
+                <option value="Long Island City">Long Island City</option>
+                <option value="Flushing">Flushing</option>
+                <option value="Other">Other</option>
+            </select><br><br>
+
+            Budget: <span id="budgetValue">$1500</span><br>
+            <input type="range" id="userBudget" min="500" max="5000" step="100" value="1500"
+                oninput="document.getElementById('budgetValue').innerHTML = '$' + this.value"><br><br>  
+
+            Move-in Date:<br>
+            <input type="date" id="moveInDate"><br><br>
+
+            Sleep Schedule:<br>
+            <select id="sleepSchedule">
+                <option value="">Select</option>
+                <option value="early">Early sleeper</option>
+                <option value="medium">Depends how I feel</option>
+                <option value="late">Late sleeper</option>
+            </select><br><br>
+
+            Cleanliness:<br>
+            <select id="cleanliness">
+                <option value="">Select</option>
+                <option value="low">Messy and proud</option>
+                <option value="medium">Average</option>
+                <option value="high">Very clean</option>
+            </select><br><br>
+
+            Noise Tolerance:<br>
+            <select id="noiseTolerance">
+                <option value="">Select</option>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+            </select><br><br>
+
+            Guest Preference:<br>
+            <select id="guestPreference">
+                <option value="">Select</option>
+                <option value="rarely">Rarely</option>
+                <option value="sometimes">Sometimes</option>
+                <option value="often">Often</option>
+            </select><br><br>
+
+            Study & Work Style:<br>
+            <select id="workStyle">
+                <option value="">Select</option>
+                <option value="quiet">Quiet</option>
+                <option value="balanced">Balanced</option>
+                <option value="flexible">Flexible</option>
+            </select><br><br>
+
+            Smoking / Drinking Habits:<br>
+            <select id="habits">
+                <option value="">Select</option>
+                <option value="none">None</option>
+                <option value="occasional">Occasional</option>
+                <option value="frequent">Frequent</option>
+            </select><br><br>
+
+            Pets Preference:<br>
+            <select id="pets">
+                <option value="">Select</option>
+                <option value="yes">Yes- I love pets!</option>
+                <option value="no">No thanks- I don't like pets.</option>
+            </select><br><br>
+
+            <input type="button" value="Save My Profile!" onclick="saveProfile()">
+         </form>
+        <div id="questionnaireStatus"></div>
+    </div>
+
+    <!--Matches page-->
+    <div id="matches" class="page" style="display:none;">
+        <h2>👯 Your Matches</h2>
+        <p>Meet your matches: </p>
+
+        <div id="matchStatus">No matches loaded yet.</div>
+        <div id="matchList"></div>
+    </div>
+
+    <!-- Match details -->
+    <div id="matchDetail" class="page" style="display:none;">
+        <h2 id="detailName"></h2>
+        <p id="detailScore"></p>
+        <img id="detailImg" style="max-width:100%; border-radius:10px; display:none; margin:12px 0;">
+        <p id="detailAge"></p>
+        <p id="detailCollege"></p>
+        <p id="detailLocation"></p>
+        <p id="detailBudget"></p>
+        <p id="detailBio"></p>
+        <p id="detailLifestyle"></p>
+        <p id="detailMatchReason"></p>
+
+        <input type="button" value="Message Match" onclick="requireLogin('messages')">
+        <input type="button" value="↩ Back to Matches" onclick="requireLogin('matches')">
+    </div>
+
+    <!-- Messages Page -->
+    <div id="messages" class="page" style="display:none;">
+        <h2>🫧 My Messages</h2>
+
+        <div style="display:flex; gap:16px; min-height:400px;">
+
+            <!-- Sidebar: list of matches to chat with -->
+            <div id="chatSidebar" style="width:220px; flex-shrink:0; border:1px solid #f0e0d8; border-radius:12px; overflow-y:auto; background:#fffaf7;">
+                <div id="chatUserList" style="padding:10px;">
+                    <p style="color:#aaa; font-size:0.9em;">No matches yet.</p>
+                </div>
+            </div>
+
+            <!-- Chat window -->
+            <div style="flex:1; display:flex; flex-direction:column; border:1px solid #f0e0d8; border-radius:12px; background:#fff;">
+                <div id="chatHeader" style="padding:14px 18px; border-bottom:1px solid #f0e0d8; font-weight:700; color:#5d4037; background:#fffaf7; border-radius:12px 12px 0 0;">
+                    Select a match to start chatting
+                </div>
+
+                <div id="messageList" style="flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:10px; min-height:280px;">
+                    <p style="color:#aaa;">No messages yet.</p>
+                </div>
+
+                <div style="padding:14px; border-top:1px solid #f0e0d8; display:flex; gap:10px;">
+                    <textarea id="messageInput" rows="2" placeholder="Type a message..." style="flex:1; resize:none;"></textarea>
+                    <input type="button" value="Send" onclick="sendMessage()" style="align-self:flex-end;">
+                </div>
+                <div id="messageStatus" style="padding:0 14px 10px; color:#b88a8d; font-size:0.85em;"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <!--Contact page-->
+    <div id="contact" class="page" style="display:none;">
+        <h2>🐚 Need Help? Contact Me: </h2>
+        <form id="contactForm" method="post" action="https://storm.cis.fordham.edu/~sultan/util/form/formProc.cgi"
+            onsubmit="return validate();">
+            <input type="hidden" name="_EMAIL" value="kseo5@fordham.edu">
+
+            Name:<br>
+            <input type="text" id="name" name="name"><br><br>
+
+            Email:<br>
+            <input type="text" id="email" name="email"><br><br>
+
+            Message:<br>
+            <textarea id="message" name="message" rows="4" cols="40"></textarea><br><br>
+
+            <input type="submit" value="Send">
+        </form>
+    </div>
+
+    <!-- JS script -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
+    <script>
+        // supabase initialization
+        const supabaseUrl = "https://qpvdkdtefkklykrobuui.supabase.co";
+        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwdmRrZHRlZmtrbHlrcm9idXVpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNjExNDEsImV4cCI6MjA5MDczNzE0MX0.krEASrImJIfAl7lbqQ41Xfu0iGPyhpIG62D_3IqENaE";
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        function toggleAuthForm(formId) {
+            var signup = document.getElementById("signupForm");
+            var login = document.getElementById("loginForm");
+
+            if (!signup || !login) {
+                console.log("signup/login form not found");
+                return;
+            }
+
+            if (formId === "signupForm") {
+                signup.style.display = (signup.style.display === "none" || signup.style.display === "") ? "block" : "none";
+                login.style.display = "none";
+            }
+
+            if (formId === "loginForm") {
+                login.style.display = (login.style.display === "none" || login.style.display === "") ? "block" : "none";
+                signup.style.display = "none";
+            }
+        }
+        
+        var pages = ["home", "questionnaire", "matches", "matchDetail", "messages", "contact"];
+        function showPage(pgId) {
+            for (var i = 0; i < pages.length; i++) {
+                var p = document.getElementById(pages[i]);
+                if (p) p.style.display = (pages[i] === pgId ? "block" : "none");
+            }
+            if (pgId === "matches") loadMatches();
+            if (pgId === "messages") loadChatSidebar(); // 👈 add this line
+        }
+        // signup with supabase auth
+        async function signUpUser() {
+            var email = document.getElementById("signupEmail").value.trim();
+            var password = document.getElementById("signupPassword").value.trim();
+
+            if (email === "" || password === "") {
+                document.getElementById("authMessage").innerHTML = "Please enter an email and password.";
+                return;
+            }
+
+            const { data, error } = await supabaseClient.auth.signUp({
+                email: email,
+                password: password
+            });
+
+            console.log("SIGN UP DATA:", data);
+            console.log("SIGN UP ERROR:", error);
+
+            if (error) {
+                document.getElementById("authMessage").innerHTML = error.message;
+                return;
+            }
+
+            document.getElementById("authMessage").innerHTML =
+                "Account created!";
+            updateAuthStatus();
+        }   
+
+        // login with supabase auth
+        async function loginUser() {
+            var email = document.getElementById("loginEmail").value.trim();
+            var password = document.getElementById("loginPassword").value.trim();
+
+            if (email === "" || password === "") {
+                document.getElementById("authMessage").innerHTML = "Please enter an email and password.";
+                return;
+            }
+
+            const { data, error } = await supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+
+            if (error) {
+                document.getElementById("authMessage").innerHTML = error.message;
+                return;
+            }
+
+            document.getElementById("authMessage").innerHTML = "Logged in!";
+
+            // 🔥 IMPORTANT
+            await updateAuthStatus();
+
+            // force navigation
+            showPage("questionnaire");
+        }
+
+        // logout
+        async function logoutUser() {
+            const { error } = await supabaseClient.auth.signOut();
+
+            if (error) {
+                document.getElementById("authMessage").innerHTML = "Logout error: " + error.message;
+                return;
+            }
+
+            document.getElementById("authMessage").innerHTML = "Logged out.";
+            updateAuthStatus();
+            showPage("home");
+        }
+        // must login to access
+        async function requireLogin(page) {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+
+            if (!session) {
+                document.getElementById("authMessage").innerHTML = "Please log in first!";
+                showPage("home");
+                return;
+            }
+
+            showPage(page);
+        }
+
+        // check auth status and update UI
+        async function updateAuthStatus() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+
+            const loggedOut = document.getElementById("loggedOutView");
+            const loggedIn = document.getElementById("loggedInView");
+            const emailText = document.getElementById("userEmail");
+
+            if (session && session.user) {
+                loggedOut.style.display = "none";
+                loggedIn.style.display = "block";
+
+                emailText.innerHTML = "Logged in as: " + session.user.email;
+            } else {
+                loggedOut.style.display = "block";
+                loggedIn.style.display = "none";
+            }
+        }
+
+        // save questionnaire profile to local storage (simulate saving to database)
+        async function saveProfile() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+
+            if (!session) {
+                document.getElementById("questionnaireStatus").innerHTML = "Please log in first.";
+                return;
+            }
+
+            var profile = {
+                user_id: session.user.id,
+                name: document.getElementById("userName").value.trim(),
+                age: document.getElementById("userAge").value.trim(),
+                gender: document.getElementById("userGender").value,
+                college: document.getElementById("userCollege").value.trim(),
+                location: document.getElementById("userLocation").value,
+                budget: document.getElementById("userBudget").value,
+                move_in_date: document.getElementById("moveInDate").value,
+                sleep_schedule: document.getElementById("sleepSchedule").value,
+                cleanliness: document.getElementById("cleanliness").value,
+                noise_tolerance: document.getElementById("noiseTolerance").value,
+                guest_preference: document.getElementById("guestPreference").value,
+                work_style: document.getElementById("workStyle").value,
+                habits: document.getElementById("habits").value,
+                pets: document.getElementById("pets").value
+            };
+
+            if (profile.name === "" || profile.age === "" || profile.gender === "" || profile.location === "") {
+                document.getElementById("questionnaireStatus").innerHTML =
+                    "Please fill in name, age, gender, and preferred location.";
+                return;
+            }
+
+            const { error } = await supabaseClient
+                .from("profiles")
+                .upsert([profile]);
+
+            if (error) {
+                document.getElementById("questionnaireStatus").innerHTML =
+                    "Error saving profile: " + error.message;
+                return;
+            }
+
+            document.getElementById("questionnaireStatus").innerHTML = "Profile saved successfully! Head to Matches to find your roommate.";
+        }
+
+        // matching algorithm
+        // Fields and their max points (total = 100):
+        // Location 20 | Budget 20 | Sleep 15 | Cleanliness 15
+        // Pets 10 | Noise 8 | Guests 5 | Work style 4 | Habits 3
+        function scoreProfiles(me, other) {
+            var score = 0;
+            var reasons = [];
+            var misses = [];
+
+            // Location (20 pts)
+            if (me.location && other.location) {
+                if (me.location === other.location) {
+                    score += 20;
+                    reasons.push("📍 Same preferred location (" + me.location + ")");
+                } else {
+                    misses.push("📍 Different location preferences (" + me.location + " vs " + other.location + ")");
+                }
+            }
+
+            // Budget (20 pts)—  full if within $300, half if within $700
+            if (me.budget && other.budget) {
+                var diff = Math.abs(Number(me.budget) - Number(other.budget));
+                if (diff <= 300) {
+                    score += 20;
+                    reasons.push("💰 Very similar budgets ($" + me.budget + " vs $" + other.budget + ")");
+                } else if (diff <= 700) {
+                    score += 10;
+                    reasons.push("💰 Reasonably close budgets ($" + me.budget + " vs $" + other.budget + ")");
+                } else {
+                    misses.push("💰 Large budget gap ($" + me.budget + " vs $" + other.budget + ")");
+                }
+            }
+
+            // Sleep schedule (15 pts)
+            if (me.sleep_schedule && other.sleep_schedule) {
+                if (me.sleep_schedule === other.sleep_schedule) {
+                    score += 15;
+                    reasons.push("🌙 Same sleep schedule (" + formatLabel(me.sleep_schedule) + ")");
+                } else if (me.sleep_schedule === "medium" || other.sleep_schedule === "medium") {
+                    score += 7;
+                    reasons.push("🌙 Flexible sleep schedules- you're likely compatible");
+                } else {
+                    misses.push("🌙 Different sleep schedules (" + formatLabel(me.sleep_schedule) + " vs " + formatLabel(other.sleep_schedule) + ")");
+                }
+            }
+
+            // Cleanliness (15 pts)
+            if (me.cleanliness && other.cleanliness) {
+                if (me.cleanliness === other.cleanliness) {
+                    score += 15;
+                    reasons.push("🧹 Same cleanliness level (" + formatLabel(me.cleanliness) + ")");
+                } else if (me.cleanliness === "medium" || other.cleanliness === "medium") {
+                    score += 7;
+                    reasons.push("🧹 Similar cleanliness standards");
+                } else {
+                    misses.push("🧹 Cleanliness habits differ significantly");
+                }
+            }
+
+            // Pets (10 pts)
+            if (me.pets && other.pets) {
+                if (me.pets === other.pets) {
+                    score += 10;
+                    reasons.push("🐾 Same pet preference (" + (me.pets === "yes" ? "loves pets" : "no pets") + ")");
+                } else {
+                    misses.push("🐾 Different pet preferences");
+                }
+            }
+
+            // Noise tolerance (8 pts)
+            if (me.noise_tolerance && other.noise_tolerance) {
+                if (me.noise_tolerance === other.noise_tolerance) {
+                    score += 8;
+                    reasons.push("🔊 Same noise tolerance (" + formatLabel(me.noise_tolerance) + ")");
+                } else if (me.noise_tolerance === "medium" || other.noise_tolerance === "medium") {
+                    score += 4;
+                    reasons.push("🔊 Similar noise tolerance");
+                } else {
+                    misses.push("🔊 Different noise tolerance levels");
+                }
+            }
+
+            // Guest preference (5 pts)
+            if (me.guest_preference && other.guest_preference) {
+                if (me.guest_preference === other.guest_preference) {
+                    score += 5;
+                    reasons.push("🚪 Same guest preference (" + formatLabel(me.guest_preference) + ")");
+                } else if (me.guest_preference === "sometimes" || other.guest_preference === "sometimes") {
+                    score += 2;
+                    reasons.push("🚪 Guest preferences are somewhat flexible");
+                } else {
+                    misses.push("🚪 Different guest preferences");
+                }
+            }
+
+            // Work style (4 pts)
+            if (me.work_style && other.work_style) {
+                if (me.work_style === other.work_style) {
+                    score += 4;
+                    reasons.push("📚 Same work/study style (" + formatLabel(me.work_style) + ")");
+                } else if (me.work_style === "flexible" || other.work_style === "flexible") {
+                    score += 2;
+                    reasons.push("📚 Work/study styles may still be compatible");
+                } else {
+                    misses.push("📚 Different work/study styles");
+                }
+            }
+
+            // Habits (3 pts)
+            if (me.habits && other.habits) {
+                if (me.habits === other.habits) {
+                    score += 3;
+                    reasons.push("🚬 Same habits (" + formatLabel(me.habits) + ")");
+                } else {
+                    misses.push("🚬 Different smoking/drinking habits");
+                }
+            }
+
+            return { score: Math.min(score, 100), reasons: reasons, misses: misses };
+        }
+
+        function formatLabel(val) {
+            var map = {
+                early: "Early sleeper",
+                medium: "Flexible",
+                late: "Late sleeper",
+                low: "Low",
+                high: "High",
+                rarely: "Rarely has guests",
+                sometimes: "Sometimes",
+                often: "Often has guests",
+                quiet: "Quiet workspace",
+                balanced: "Balanced",
+                flexible: "Flexible",
+                none: "No smoking/drinking",
+                occasional: "Occasional",
+                frequent: "Frequent",
+                yes: "Loves pets",
+                no: "No pets"
+            };
+            return map[val] || val;
+        }
+
+        async function loadMatches() {
+            var statusEl = document.getElementById("matchStatus");
+            var listEl = document.getElementById("matchList");
+
+            statusEl.innerHTML = "🔍 Finding your matches...";
+            listEl.innerHTML = "";
+
+            const { data: { session } } = await supabaseClient.auth.getSession();
+
+            if (!session) {
+                statusEl.innerHTML = "Please log in first.";
+                return;
+            }
+
+            const { data: myData, error: myError } = await supabaseClient
+                .from("profiles")
+                .select("*")
+                .eq("user_id", session.user.id)
+                .limit(1);
+
+            if (myError || !myData || myData.length === 0) {
+                statusEl.innerHTML = "You haven't filled out your questionnaire yet! Go to Questionnaire first.";
+                return;
+            }
+
+            var me = myData[0];
+
+            const { data: others, error: othersError } = await supabaseClient
+                .from("profiles")
+                .select("*")
+                .neq("user_id", session.user.id);
+
+            if (othersError) {
+                statusEl.innerHTML = "Error loading matches: " + othersError.message;
+                return;
+            }
+
+            if (!others || others.length === 0) {
+                statusEl.innerHTML = "No other users have signed up yet :( check back soon!";
+                return;
+            }
+
+            var scored = others.map(function(other) {
+                var result = scoreProfiles(me, other);
+                return {
+                    profile: other,
+                    score: result.score,
+                    reasons: result.reasons,
+                    misses: result.misses
+                };
+            }).sort(function(a, b) {
+                return b.score - a.score;
+            });
+
+            var good = scored.filter(function(m) {
+                return m.score >= 30;
+            });
+
+            if (good.length === 0) {
+                statusEl.innerHTML = "No strong matches yet... check back when more users join!";
+                return;
+            }
+
+            statusEl.innerHTML = "Found <strong>" + good.length + "</strong> potential match" + (good.length !== 1 ? "es" : "") + " for you!";
+
+            var html = "";
+
+            good.forEach(function(m, i) {
+                var color = m.score >= 75 ? "#4caf50" : m.score >= 50 ? "#ff9800" : "#9e9e9e";
+                var emoji = m.score >= 75 ? "💚" : m.score >= 50 ? "🧡" : "🤍";
+                var topReasons = m.reasons.slice(0, 2).join(" · ");
+
+                html +=
+                    "<div style='border:1px solid #f0e0d8; border-radius:12px; padding:18px; margin:14px 0; background:#fffaf7;'>" +
+                        "<div style='display:flex; justify-content:space-between; align-items:center;'>" +
+                            "<strong style='font-size:1.1em;'>" + emoji + " " + (m.profile.name || "Anonymous") + "</strong>" +
+                            "<span style='font-size:1.2em; font-weight:700; color:" + color + ";'>" + m.score + "% match</span>" +
+                        "</div>" +
+                        "<p style='margin:6px 0 2px; color:#777; font-size:0.9em;'>📍 " + (m.profile.location || "—") + " &nbsp;|&nbsp; 💰 $" + (m.profile.budget || "—") + "/mo</p>" +
+                        (topReasons ? "<p style='margin:4px 0; color:#888; font-size:0.85em;'>" + topReasons + "</p>" : "") +
+                        "<input type='button' value='View Match' onclick='showMatchDetail(" + i + ")' style='margin-top:10px;'>" +
+                    "</div>";
+            });
+
+            listEl.innerHTML = html;
+            window.currentMatches = good;
+        }
+
+        function showMatchDetail(index) {
+            var m = window.currentMatches[index];
+            var p = m.profile;
+
+            document.getElementById("detailName").innerHTML = p.name || "Anonymous";
+
+            var detailScore = document.getElementById("detailScore");
+            if (detailScore) {
+                detailScore.innerHTML = "💖 " + m.score + "% compatibility";
+            }
+
+            document.getElementById("detailAge").innerHTML = p.age ? "🎂 Age: " + p.age : "";
+            document.getElementById("detailCollege").innerHTML = p.college ? "🎓 " + p.college : "";
+            document.getElementById("detailLocation").innerHTML = p.location ? "📍 Preferred location: " + p.location : "";
+            document.getElementById("detailBudget").innerHTML = p.budget ? "💰 Budget: $" + p.budget + "/mo" : "";
+
+            var lifestyle = [];
+            if (p.sleep_schedule) lifestyle.push("🌙 " + formatLabel(p.sleep_schedule));
+            if (p.cleanliness) lifestyle.push("🧹 " + formatLabel(p.cleanliness) + " cleanliness");
+            if (p.noise_tolerance) lifestyle.push("🔊 " + formatLabel(p.noise_tolerance) + " noise tolerance");
+            if (p.guest_preference) lifestyle.push("🚪 " + formatLabel(p.guest_preference) + " guests");
+            if (p.work_style) lifestyle.push("📚 " + formatLabel(p.work_style) + " work style");
+            if (p.pets) lifestyle.push(p.pets === "yes" ? "🐾 Loves pets" : "🐾 No pets");
+            if (p.habits) lifestyle.push("🚬 " + formatLabel(p.habits));
+
+            document.getElementById("detailLifestyle").innerHTML = lifestyle.join(" &nbsp;|&nbsp; ");
+
+            var html = "<strong>Why you matched:</strong><br><br>";
+
+            if (m.reasons.length > 0) {
+                html += m.reasons.map(function(r) {
+                    return "✅ " + r;
+                }).join("<br>");
+            } else {
+                html += "You have a few things in common!";
+            }
+
+            if (m.misses.length > 0) {
+                html += "<br><br><strong>Things to discuss before moving in:</strong><br>";
+                html += m.misses.map(function(r) {
+                    return "⚠️ " + r;
+                }).join("<br>");
+            }
+
+            document.getElementById("detailMatchReason").innerHTML = html;
+            showPage("matchDetail");
+        }
+
+       // chat functionality through supabase
+       var activeChatUser = null;       // user_id of who you're chatting with
+       var activeChatName = null;       // their display name
+       var currentMatches = [];
+       var realtimeChannel = null;      // holds the live subscription
+
+        // Build sidebar from matched users
+        async function loadChatSidebar() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session) return;
+
+            // Pull all profiles except the logged-in user
+            const { data: profiles, error } = await supabaseClient
+                .from("profiles")
+                .select("user_id, name")
+                .neq("user_id", session.user.id);
+
+            var sidebar = document.getElementById("chatUserList");
+            if (!profiles || profiles.length === 0) {
+                sidebar.innerHTML = "<p style='color:#aaa; font-size:0.9em; padding:6px;'>No matches yet.</p>";
+                return;
+            }
+
+            var html = "";
+            profiles.forEach(function(p) {
+                html += "<div onclick='openChat(\"" + p.user_id + "\", \"" + (p.name || "User") + "\")' " +
+                    "style='padding:10px 12px; cursor:pointer; border-radius:8px; margin-bottom:4px; transition:0.2s;' " +
+                    "onmouseover='this.style.background=\"#f7f3f1\"' onmouseout='this.style.background=\"transparent\"'>" +
+                    "<strong style='color:#5d4037;'>" + (p.name || "User") + "</strong>" +
+                    "</div>";
+            });
+            sidebar.innerHTML = html;
+        }
+
+        // Open a chat with a specific user
+        async function openChat(userId, userName) {
+            activeChatUser = userId;
+            activeChatName = userName;
+
+            document.getElementById("chatHeader").innerHTML = "💬 " + userName;
+            document.getElementById("messageStatus").innerHTML = "";
+
+            await loadMessages();
+            subscribeToMessages();
+        }
+
+        // Load messages between logged-in user and activeChatUser
+        async function loadMessages() {
+            if (!activeChatUser) return;
+
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session) return;
+
+            var myId = session.user.id;
+
+            const { data: msgs, error } = await supabaseClient
+                .from("messages")
+                .select("*")
+                .or(
+                    "and(sender_id.eq." + myId + ",receiver_id.eq." + activeChatUser + ")," +
+                    "and(sender_id.eq." + activeChatUser + ",receiver_id.eq." + myId + ")"
+                )
+                .order("created_at", { ascending: true });
+
+            var out = document.getElementById("messageList");
+            if (!msgs || msgs.length === 0) {
+                out.innerHTML = "<p style='color:#aaa;'>No messages yet. Say hi!</p>";
+                return;
+            }
+
+            var html = "";
+            msgs.forEach(function(m) {
+                var isMine = m.sender_id === myId;
+                var time = new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                html += "<div style='" +
+                    "display:flex; justify-content:" + (isMine ? "flex-end" : "flex-start") + ";'>" +
+                    "<div style='" +
+                    "max-width:70%; padding:10px 14px; border-radius:" + (isMine ? "18px 18px 4px 18px" : "18px 18px 18px 4px") + "; " +
+                    "background:" + (isMine ? "#d4c0b4" : "#f7f3f1") + "; " +
+                    "color:" + (isMine ? "#fff" : "#444") + "; font-size:0.95em;'>" +
+                    m.content +
+                    "<div style='font-size:0.72em; margin-top:4px; opacity:0.6; text-align:right;'>" + time + "</div>" +
+                    "</div></div>";
+            });
+            out.innerHTML = html;
+
+            // Scroll to bottom
+            out.scrollTop = out.scrollHeight;
+        }
+
+        // Send a message
+        async function sendMessage() {
+            if (!activeChatUser) {
+                document.getElementById("messageStatus").innerHTML = "Select a match first!";
+                return;
+            }
+
+            var msgBox = document.getElementById("messageInput");
+            var msg = msgBox.value.trim();
+
+            if (msg === "") {
+                document.getElementById("messageStatus").innerHTML = "Type something first!";
+                return;
+            }
+
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session) return;
+
+            const { error } = await supabaseClient.from("messages").insert({
+                sender_id: session.user.id,
+                receiver_id: activeChatUser,
+                content: msg
+            });
+
+            if (error) {
+                document.getElementById("messageStatus").innerHTML = "Error sending: " + error.message;
+                return;
+            }
+
+            msgBox.value = "";
+            document.getElementById("messageStatus").innerHTML = "";
+        }
+
+        // Live subscription — auto-refresh when new message arrives
+        function subscribeToMessages() {
+            // Unsubscribe from previous channel if switching chats
+            if (realtimeChannel) {
+                supabaseClient.removeChannel(realtimeChannel);
+            }
+
+            realtimeChannel = supabaseClient
+                .channel("messages-live")
+                .on("postgres_changes", {
+                    event: "INSERT",
+                    schema: "public",
+                    table: "messages"
+                }, function(payload) {
+                    var msg = payload.new;
+                    // Only reload if it's relevant to the open chat
+                    if (
+                        (msg.sender_id === activeChatUser) ||
+                        (msg.receiver_id === activeChatUser)
+                    ) {
+                        loadMessages();
+                    }
+                })
+                .subscribe();
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var btn = document.getElementById("btnStart");
+            if (btn) {
+                btn.onclick = function () {
+                    requireLogin("questionnaire");
+                };
+            }
+            updateAuthStatus();
+        });
+
+        supabaseClient.auth.onAuthStateChange(() => {
+            updateAuthStatus();
+        });
+
+        // validate form
+        function validate() {
+            if (document.getElementById("name").value.trim() == "") {
+                alert("Please enter your name!");
+                return false;
+            }
+
+            if (document.getElementById("email").value.trim() == "") {
+                alert("Please enter your email!");
+                return false;
+            }
+
+            if (document.getElementById("email").value.indexOf("@") == -1) {
+                alert("Please enter a valid email!");
+                return false;
+            }
+
+            if (document.getElementById("message").value.trim() == "") {
+                alert("Please enter a message!");
+                return false;
+            }
+
+            var entry = {
+                name: document.getElementById("name").value.trim(),
+                email: document.getElementById("email").value.trim(),
+                message: document.getElementById("message").value.trim(),
+                time: new Date().toLocaleString()
+            };
+
+            var saved = JSON.parse(localStorage.getItem("contacts") || "[]");
+            saved.push(entry);
+            localStorage.setItem("contacts", JSON.stringify(saved));
+            return true;
+        }
+
+        window.onload = async function () {
+            showPage("home");
+            loadMessages();
+            updateAuthStatus();
+
+            supabaseClient.auth.onAuthStateChange(function (event, session) {
+                updateAuthStatus();
+            });
+        };
+    </script>
+</body>
+
+</html>
