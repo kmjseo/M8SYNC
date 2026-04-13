@@ -4,7 +4,7 @@
 <head>
     <title>M8SYNC</title>
     <link rel="stylesheet" href="M8SYNC.css">
-</head>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet"></head>
 
 <body>
     <h1>.𖥔 ݁ Welcome to M8SYNC ˖๋ ࣭ ⭑</h1>
@@ -348,7 +348,6 @@
 
             document.getElementById("authMessage").innerHTML = "Logged in!";
 
-            // 🔥 IMPORTANT
             await updateAuthStatus();
 
             // force navigation
@@ -703,8 +702,9 @@
             if (p.habits) lifestyle.push("🚬 " + formatLabel(p.habits));
 
             document.getElementById("detailLifestyle").innerHTML = lifestyle.join(" &nbsp;|&nbsp; ");
-
-            var html = "<strong>Why you matched:</strong><br><br>";
+            
+            
+            var html = "<strong>Why you matched:</strong><br>";
 
             if (m.reasons.length > 0) {
                 html += m.reasons.map(function(r) {
