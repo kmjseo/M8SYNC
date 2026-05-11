@@ -1,0 +1,1816 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>bunkd</title>
+    <link rel="stylesheet" href="bunkd.css">
+</head>
+
+<body class="home-active">
+    <img src="logo.png" alt="bunkd logo" class="site-logo">
+
+    <!--Nav buttons-->
+    <div id="nav">
+        <button type="button" id="navToggle" onclick="toggleNav()">☰</button>
+        <div class="nav-links">
+        <input type="button" value="Home" onclick="showPage('home')">
+        <input type="button" value="Profile" onclick="requireLogin('profile')">
+        <input type="button" value="Questionnaire" onclick="requireLogin('questionnaire')">
+        <input type="button" value="Matches" onclick="requireLogin('matches')">
+        <input type="button" value="Messages" onclick="requireLogin('messages')">
+        <input type="button" value="Contact" onclick="showPage('contact')">
+        <input type="button" value="Logout" onclick="logoutUser()"> 
+        </div>
+    </div>
+
+    <!--Home Page-->
+    <div id="home" class="page">
+        <div class="hero-grid">
+            <div class="hero-left">
+                <img src="logo.png" alt="bunkd logo" class="home-logo">
+                <h1 class="hero-title">Find a roommate.</h1>
+                <p class="hero-sub">Roommate matching built around how you live: sleep, study, mess, the works. Not just who can split rent.</p>
+
+                <!-- NOT LOGGED IN -->
+                <div id="loggedOutView" class="hero-cta">
+                    <input type="button" value="Create account" onclick="toggleAuthForm('signupForm')">
+                    <input type="button" class="ghost" value="Login" onclick="toggleAuthForm('loginForm')">
+                </div>
+
+                <div id="signupForm" class="auth-panel" style="display:none;">
+                    <h3>Create account</h3>
+                    <input type="email" id="signupEmail" placeholder="Email">
+                    <input type="password" id="signupPassword" placeholder="Password">
+                    <div class="auth-actions">
+                        <input type="button" value="Sign up" onclick="signUpUser()">
+                        <input type="button" class="ghost" value="Cancel" onclick="toggleAuthForm('')">
+                    </div>
+                </div>
+
+                <div id="loginForm" class="auth-panel" style="display:none;">
+                    <h3>Welcome back</h3>
+                    <input type="email" id="loginEmail" placeholder="Email">
+                    <input type="password" id="loginPassword" placeholder="Password">
+                    <div class="auth-actions">
+                        <input type="button" value="Log in" onclick="loginUser()">
+                        <input type="button" class="ghost" value="Cancel" onclick="toggleAuthForm('')">
+                    </div>
+                </div>
+
+                <!-- LOGGED IN -->
+                <div id="loggedInView" class="hero-cta" style="display:none;">
+                    <p id="userEmail" class="hero-email"></p>
+                    <input type="button" value="Continue" onclick="requireLogin('questionnaire')">
+                    <input type="button" class="ghost" value="Log out" onclick="logoutUser()">
+                </div>
+
+                <div id="authMessage" class="auth-message"></div>
+            </div>
+
+            <!-- decorative preview cards -->
+            <div class="hero-right">
+                <div class="hero-card hero-card-1">
+                    <div class="hero-card-photo"></div>
+                    <div class="hero-card-name">Maya, 20</div>
+                    <div class="hero-card-tag">Late owl · Tidy · Quiet study</div>
+                </div>
+                <div class="hero-card hero-card-2">
+                    <div class="hero-card-photo alt"></div>
+                    <div class="hero-card-name">Jordan, 19</div>
+                    <div class="hero-card-tag">Early bird · Loves pets · Loschert Hall</div>
+                </div>
+                <div class="hero-match-badge">93% match</div>
+            </div>
+        </div>
+
+        <!-- how it works -->
+        <div class="hero-steps">
+            <div class="step"><span class="step-num">01</span><h4>Take the quiz</h4><p>Tell us how you live: sleep, cleanliness, study, all of it.</p></div>
+            <div class="step"><span class="step-num">02</span><h4>See your matches</h4><p>We score every other student against your lifestyle and dorm.</p></div>
+            <div class="step"><span class="step-num">03</span><h4>Message and meet</h4><p>Chat in-app, find your person, request them as a roommate.</p></div>
+        </div>
+    </div>
+
+    <!--Questionnaire Page-->
+    <div id="questionnaire" class="page" style="display:none;">
+
+        <!-- Shown if profile already exists -->
+        <div id="questionnaireSaved" style="display:none;" class="quiz-saved">
+            <h3>Your profile is all set!</h3>
+            <p>Want to update your answers or peek at your profile?</p>
+            <div class="auth-actions" style="justify-content:center;">
+                <input type="button" value="Retake quiz" onclick="retakeQuiz()">
+                <input type="button" class="ghost" value="View my profile" onclick="showPage('profile')">
+            </div>
+        </div>
+
+        <!-- swipeable card-based quiz -->
+        <div id="questionnaireFormWrap">
+            <div class="quiz-shell">
+                <div class="quiz-progress-wrap">
+                    <div class="quiz-progress-bar"><div id="quizProgressFill" class="quiz-progress-fill"></div></div>
+                    <div id="quizProgressText" class="quiz-progress-text">1 of 18</div>
+                </div>
+
+                <div id="quizStage" class="quiz-stage">
+                    <!-- cards rendered by JS -->
+                </div>
+
+                <div class="quiz-nav">
+                    <input type="button" id="quizBackBtn" class="ghost" value="Back" onclick="quizBack()">
+                    <input type="button" id="quizNextBtn" value="Next" onclick="quizNext()" style="display:none;">
+                </div>
+
+                <div id="questionnaireStatus"></div>
+            </div>
+        </div>
+    </div>
+
+    <!--Matches page-->
+    <div id="matches" class="page" style="display:none;">
+        <h2>Your matches</h2>
+        <p>Swipe right to match and message. Swipe left to pass.</p>
+
+        <div id="matchStatus">No matches loaded yet.</div>
+        <div id="matchList" class="match-deck"></div>
+        <div class="swipe-actions">
+            <input type="button" class="ghost pass-btn" value="Pass" onclick="swipeMatch('left')">
+            <input type="button" class="like-btn" value="Match" onclick="swipeMatch('right')">
+        </div>
+    </div>
+
+    <!--Profile page-->
+    <div id="profile" class="page" style="display:none;">
+        <h2>My profile</h2>
+        <div id="profileContent"><p>Loading...</p></div>
+        <div style="text-align:center; margin-top:28px;">
+            <input type="button" value="Edit my answers" onclick="retakeQuiz()">
+        </div>
+    </div>
+
+    <!-- Match details -->
+    <div id="matchDetail" class="page" style="display:none;">
+        <div id="matchDetailContent"></div>
+        <div style="display:flex; gap:12px; margin-top:20px; justify-content:center;">
+            <input type="button" class="ghost" value="Back to matches" onclick="showPage('matches')">
+            <input type="button" value="Message" onclick="messageMatch()">
+        </div>
+    </div>
+
+    <!-- Messages Page -->
+    <div id="messages" class="page" style="display:none;">
+        <h2>Messages</h2>
+
+        <div class="messages-container">
+
+            <!-- Sidebar: list of matches to chat with -->
+            <div id="chatSidebar" class="chat-list">
+                <p style="color:var(--muted); font-size:0.9em;">No matches yet.</p>
+            </div>
+
+            <!-- Chat window -->
+            <div class="chat-panel">
+                <div id="chatHeader" class="chat-header">
+                    Select a match to start chatting
+                </div>
+
+                <div id="messageList" class="chat-messages">
+                </div>
+
+                <div class="chat-input">
+                    <textarea id="messageInput" placeholder="Type a message..."></textarea>
+                    <button onclick="sendMessage()">Send</button>
+                </div>
+                <div id="messageStatus" style="padding:0 14px 10px; color:var(--muted); font-size:0.85em;"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <!--Contact page-->
+    <div id="contact" class="page" style="display:none;">
+        <h2>Need help? Contact me</h2>
+
+        <div class="auth-card" style="text-align:left;">
+            <form id="contactForm" method="post" action="https://storm.cis.fordham.edu/~sultan/util/form/formProc.cgi"
+                onsubmit="return validate();" style="max-width:none; margin:0; padding:0; background:transparent; border:none; box-shadow:none;">
+                <input type="hidden" name="_EMAIL" value="kseo5@fordham.edu">
+
+                <label class="field-label">Name</label>
+                <input type="text" id="name" name="name">
+
+                <label class="field-label">Email</label>
+                <input type="text" id="email" name="email">
+
+                <label class="field-label">Message</label>
+                <textarea id="message" name="message" rows="4"></textarea>
+
+                <div style="text-align:center; margin-top:18px;">
+                    <input type="submit" value="Send message">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JS script -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
+    <script>
+        // supabase initialization
+        const supabaseUrl = "https://qpvdkdtefkklykrobuui.supabase.co";
+        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwdmRrZHRlZmtrbHlrcm9idXVpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNjExNDEsImV4cCI6MjA5MDczNzE0MX0.krEASrImJIfAl7lbqQ41Xfu0iGPyhpIG62D_3IqENaE";
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        function toggleAuthForm(formId) {
+            var signup = document.getElementById("signupForm");
+            var login = document.getElementById("loginForm");
+            var loggedOut = document.getElementById("loggedOutView");
+
+            if (!signup || !login) {
+                console.log("signup/login form not found");
+                return;
+            }
+
+            // empty string closes both panels
+            if (formId === "") {
+                signup.style.display = "none";
+                login.style.display = "none";
+                loggedOut.style.display = "flex";
+                return;
+            }
+
+            if (formId === "signupForm") {
+                signup.style.display = "block";
+                login.style.display = "none";
+                loggedOut.style.display = "none";
+            }
+
+            if (formId === "loginForm") {
+                login.style.display = "block";
+                signup.style.display = "none";
+                loggedOut.style.display = "none";
+            }
+        }
+        
+        var pages = ["home", "questionnaire", "matches", "matchDetail", "messages", "contact", "profile"];
+        var currentPage = "home";
+        var pendingPageFrame = null;
+
+        function toggleNav() {
+            document.body.classList.toggle("nav-collapsed");
+        }
+
+        function showPage(pgId) {
+            if (pendingPageFrame) {
+                cancelAnimationFrame(pendingPageFrame);
+            }
+
+            document.body.classList.add("page-switching");
+            for (var i = 0; i < pages.length; i++) {
+                var p = document.getElementById(pages[i]);
+                if (p) p.style.display = "none";
+            }
+
+            document.body.classList.toggle("home-active", pgId === "home");
+
+            currentPage = pgId;
+
+            pendingPageFrame = requestAnimationFrame(function() {
+                var nextPage = document.getElementById(pgId);
+                if (nextPage) nextPage.style.display = "block";
+                document.body.classList.remove("page-switching");
+                pendingPageFrame = null;
+            });
+
+            if (pgId === "matches") loadMatches();
+            if (pgId === "messages") loadChatSidebar();
+            if (pgId === "questionnaire") checkQuestionnaireState();
+            if (pgId === "profile") loadProfilePage();
+        }
+
+        // signup with supabase auth
+        async function signUpUser() {
+            var email = document.getElementById("signupEmail").value.trim();
+            var password = document.getElementById("signupPassword").value.trim();
+
+            if (email === "" || password === "") {
+                document.getElementById("authMessage").innerHTML = "Please enter an email and password.";
+                return;
+            }
+
+            const { data, error } = await supabaseClient.auth.signUp({
+                email: email,
+                password: password
+            });
+
+            console.log("SIGN UP DATA:", data);
+            console.log("SIGN UP ERROR:", error);
+
+            if (error) {
+                document.getElementById("authMessage").innerHTML = error.message;
+                return;
+            }
+
+            document.getElementById("authMessage").innerHTML = "Account created!";
+            updateAuthStatus();
+        }   
+
+        // login with supabase auth
+        async function loginUser() {
+            var email = document.getElementById("loginEmail").value.trim();
+            var password = document.getElementById("loginPassword").value.trim();
+
+            if (email === "" || password === "") {
+                document.getElementById("authMessage").innerHTML = "Please enter an email and password.";
+                return;
+            }
+
+            const { data, error } = await supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+
+            if (error) {
+                document.getElementById("authMessage").innerHTML = error.message;
+                return;
+            }
+
+            document.getElementById("authMessage").innerHTML = "Logged in!";
+
+            await updateAuthStatus();
+
+            // force navigation
+            showPage("questionnaire");
+        }
+
+        // logout
+        async function logoutUser() {
+            const { error } = await supabaseClient.auth.signOut();
+
+            if (error) {
+                document.getElementById("authMessage").innerHTML = "Logout error: " + error.message;
+                return;
+            }
+
+            document.getElementById("authMessage").innerHTML = "Logged out.";
+            updateAuthStatus();
+            showPage("home");
+        }
+
+        // must login to access
+        async function requireLogin(page) {
+            document.body.classList.add("page-switching");
+            const { data: { session } } = await supabaseClient.auth.getSession();
+
+            if (!session) {
+                document.getElementById("authMessage").innerHTML = "Please log in first!";
+                showPage("home");
+                return;
+            }
+
+            showPage(page);
+        }
+
+        // check auth status and update UI
+        async function updateAuthStatus() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+
+            const loggedOut = document.getElementById("loggedOutView");
+            const loggedIn = document.getElementById("loggedInView");
+            const emailText = document.getElementById("userEmail");
+            const signup = document.getElementById("signupForm");
+            const login = document.getElementById("loginForm");
+
+            if (session && session.user) {
+                currentUserId = session.user.id;
+                loggedOut.style.display = "none";
+                loggedIn.style.display = "flex";
+                if (signup) signup.style.display = "none";
+                if (login) login.style.display = "none";
+
+                emailText.innerHTML = "Logged in as " + session.user.email;
+            } else {
+                currentUserId = null;
+                loggedOut.style.display = "flex";
+                loggedIn.style.display = "none";
+            }
+        }
+        
+        // profile picture upload
+        async function uploadPhoto(userId) {
+            var fileInput = document.getElementById("userPhoto");
+            if (!fileInput || !fileInput.files || fileInput.files.length === 0) return null;
+
+            var file = fileInput.files[0];
+            var ext = file.name.split(".").pop();
+            var path = userId + "/avatar." + ext;  // user-scoped folder, matches the RLS policy
+
+            const { error: uploadError } = await supabaseClient
+                .storage.from("avatars")
+                .upload(path, file, { upsert: true });
+
+            if (uploadError) { console.log("Upload error:", uploadError); return null; }
+
+            const { data } = supabaseClient.storage.from("avatars").getPublicUrl(path);
+            return data.publicUrl + "?t=" + Date.now();  // cache-bust so updated photos show immediately
+        }
+
+        // ----- swipeable quiz logic -----
+
+        // question definitions - order matters
+        var quizQuestions = [
+            { id: "userName", type: "text", label: "What's your name?", placeholder: "First name", required: true },
+            { id: "userAge", type: "number", label: "How old are you?", placeholder: "e.g. 19", required: true },
+            { id: "userGender", type: "choice", label: "How do you identify?", required: true, options: [
+                { value: "female", label: "Female" },
+                { value: "male", label: "Male" },
+                { value: "nonbinary", label: "Non-binary" },
+                { value: "preferNot", label: "Prefer not to say" }
+            ]},
+            { id: "userCollege", type: "text", label: "What college do you go to?", placeholder: "e.g. Fordham University", required: true, normalize: true },
+            { id: "userMajor", type: "text", label: "What's your major?", placeholder: "e.g. Computer Science", required: true, normalize: true },
+            { id: "userInstagram", type: "text", label: "Instagram?", placeholder: "Optional username", required: false },
+            { id: "userYear", type: "choice", label: "What year are you?", required: true, options: [
+                { value: "freshman", label: "Freshman" },
+                { value: "sophomore", label: "Sophomore" },
+                { value: "junior", label: "Junior" },
+                { value: "senior", label: "Senior" },
+                { value: "grad", label: "Grad student" }
+            ]},
+            { id: "userDorm", type: "text", label: "Which dorm are you hoping for?", placeholder: "e.g. Loschert Hall (or 'any')", required: true, normalize: true },
+            { id: "dormGenderRule", type: "choice", label: "Is that dorm unisex or one-gender?", required: true, options: [
+                { value: "unisex", label: "Unisex / co-ed" },
+                { value: "singleGender", label: "One gender only" }
+            ]},
+            { id: "userRoomType", type: "choice", label: "Room type preference?", required: true, options: [
+                { value: "double", label: "Double" },
+                { value: "triple", label: "Triple" },
+                { value: "quad", label: "Quad" },
+                { value: "any", label: "No preference" }
+            ]},
+            { id: "sleepSchedule", type: "choice", label: "What's your sleep schedule?", required: true, options: [
+                { value: "early", label: "Early sleeper" },
+                { value: "medium", label: "Depends how I feel" },
+                { value: "late", label: "Late sleeper" }
+            ]},
+            { id: "cleanliness", type: "choice", label: "How clean do you keep things?", required: true, options: [
+                { value: "low", label: "Messy and proud" },
+                { value: "medium", label: "Average" },
+                { value: "high", label: "Very clean" }
+            ]},
+            { id: "noiseTolerance", type: "choice", label: "Noise tolerance?", required: true, options: [
+                { value: "low", label: "Low: I need quiet" },
+                { value: "medium", label: "Medium" },
+                { value: "high", label: "High: bring the chaos" }
+            ]},
+            { id: "guestPreference", type: "choice", label: "How often do you have guests over?", required: true, options: [
+                { value: "rarely", label: "Rarely" },
+                { value: "sometimes", label: "Sometimes" },
+                { value: "often", label: "Often" }
+            ]},
+            { id: "workStyle", type: "choice", label: "Study and work style?", required: true, options: [
+                { value: "quiet", label: "Quiet workspace" },
+                { value: "balanced", label: "Balanced" },
+                { value: "flexible", label: "Flexible" }
+            ]},
+            { id: "habits", type: "choice", label: "Smoking or drinking habits?", required: true, options: [
+                { value: "none", label: "None" },
+                { value: "occasional", label: "Occasional" },
+                { value: "frequent", label: "Frequent" }
+            ]},
+            { id: "pets", type: "choice", label: "How do you feel about pets?", required: true, options: [
+                { value: "yes", label: "I love pets" },
+                { value: "no", label: "No pets please" }
+            ]},
+            { id: "userPhoto", type: "photo", label: "Add a profile photo", required: false }
+        ];
+
+        // in-memory quiz state
+        var quizAnswers = {};
+        var quizIndex = 0;
+        var inRetakeMode = false;
+
+        // render the current question card
+        function renderQuizCard() {
+            var stage = document.getElementById("quizStage");
+            var q = quizQuestions[quizIndex];
+            var current = quizAnswers[q.id] || "";
+
+            var html = "<div class='quiz-card' id='quizCard'>";
+            html += "<p class='quiz-step-label'>Question " + (quizIndex + 1) + " of " + quizQuestions.length + "</p>";
+            html += "<h2 class='quiz-question'>" + q.label + "</h2>";
+
+            if (q.type === "choice") {
+                html += "<div class='quiz-choices'>";
+                q.options.forEach(function(opt) {
+                    var selected = current === opt.value ? " selected" : "";
+                    html += "<button type='button' class='quiz-choice" + selected + "' onclick=\"quizSelectChoice('" + q.id + "', '" + opt.value + "')\">" + opt.label + "</button>";
+                });
+                html += "</div>";
+            } else if (q.type === "text" || q.type === "number") {
+                html += "<input type='" + (q.type === "number" ? "number" : "text") + "' class='quiz-input' id='quizInput' placeholder='" + (q.placeholder || "") + "' value='" + escapeAttr(current) + "' onkeydown='quizInputKey(event)'>";
+            } else if (q.type === "photo") {
+                html += "<div class='quiz-photo-wrap'>";
+                html += "<input type='file' id='userPhoto' accept='image/*' onchange='quizPhotoPreview(event)'>";
+                html += "<label for='userPhoto' class='quiz-photo-label'><span>Choose a photo</span><small>Optional: you can skip this</small></label>";
+                html += "<div id='quizPhotoPreview' class='quiz-photo-preview'></div>";
+                html += "</div>";
+            }
+
+            html += "</div>";
+            stage.innerHTML = html;
+
+            // show Next button for text/photo, hide for choice (auto-advance)
+            var nextBtn = document.getElementById("quizNextBtn");
+            if (q.type === "choice") {
+                nextBtn.style.display = "none";
+            } else {
+                nextBtn.style.display = "inline-block";
+                nextBtn.value = (quizIndex === quizQuestions.length - 1) ? "Save profile" : "Next";
+            }
+
+            // disable Back on first card
+            var backBtn = document.getElementById("quizBackBtn");
+            backBtn.style.display = quizIndex === 0 ? "none" : "inline-block";
+
+            // focus the input if there is one
+            setTimeout(function() {
+                var inp = document.getElementById("quizInput");
+                if (inp) inp.focus();
+            }, 100);
+
+            updateQuizProgress();
+        }
+
+        function escapeAttr(s) {
+            return String(s).replace(/'/g, "&apos;").replace(/"/g, "&quot;");
+        }
+
+        function updateQuizProgress() {
+            var pct = ((quizIndex + 1) / quizQuestions.length) * 100;
+            document.getElementById("quizProgressFill").style.width = pct + "%";
+            document.getElementById("quizProgressText").innerHTML = (quizIndex + 1) + " of " + quizQuestions.length;
+        }
+
+        // tap a choice option - auto advance
+        function quizSelectChoice(qId, value) {
+            quizAnswers[qId] = value;
+
+            // visual feedback before advancing
+            var card = document.getElementById("quizCard");
+            if (card) card.classList.add("quiz-card-out");
+
+            setTimeout(function() {
+                if (quizIndex < quizQuestions.length - 1) {
+                    quizIndex++;
+                    renderQuizCard();
+                } else {
+                    saveProfile();
+                }
+            }, 220);
+        }
+
+        // Next button (used by text/photo questions)
+        function quizNext() {
+            var q = quizQuestions[quizIndex];
+
+            if (q.type === "text" || q.type === "number") {
+                var inp = document.getElementById("quizInput");
+                var val = inp ? inp.value.trim() : "";
+                if (q.required && val === "") {
+                    document.getElementById("questionnaireStatus").innerHTML = "Please answer this question.";
+                    return;
+                }
+                quizAnswers[q.id] = val;
+            }
+
+            document.getElementById("questionnaireStatus").innerHTML = "";
+
+            var card = document.getElementById("quizCard");
+            if (card) card.classList.add("quiz-card-out");
+
+            setTimeout(function() {
+                if (quizIndex < quizQuestions.length - 1) {
+                    quizIndex++;
+                    renderQuizCard();
+                } else {
+                    saveProfile();
+                }
+            }, 220);
+        }
+
+        // Back button
+        function quizBack() {
+            if (quizIndex === 0) return;
+
+            // save text input value before going back
+            var q = quizQuestions[quizIndex];
+            if (q.type === "text" || q.type === "number") {
+                var inp = document.getElementById("quizInput");
+                if (inp) quizAnswers[q.id] = inp.value.trim();
+            }
+
+            var card = document.getElementById("quizCard");
+            if (card) card.classList.add("quiz-card-back");
+
+            setTimeout(function() {
+                quizIndex--;
+                renderQuizCard();
+            }, 220);
+        }
+
+        // pressing Enter on text input advances
+        function quizInputKey(e) {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                quizNext();
+            }
+        }
+
+        // photo preview when uploaded
+        function quizPhotoPreview(e) {
+            var file = e.target.files[0];
+            if (!file) return;
+            var reader = new FileReader();
+            reader.onload = function(ev) {
+                document.getElementById("quizPhotoPreview").innerHTML =
+                    "<img src='" + ev.target.result + "' alt='preview'>";
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // save profile to supabase
+        async function saveProfile() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session) {
+                document.getElementById("questionnaireStatus").innerHTML = "Please log in first.";
+                return;
+            }
+
+            document.getElementById("questionnaireStatus").innerHTML = "Saving...";
+
+            var photoUrl = await uploadPhoto(session.user.id);
+
+            // normalize text fields to lowercase for case-insensitive matching
+            function norm(s) { return (s || "").trim().toLowerCase(); }
+
+            var profile = {
+                user_id: session.user.id,
+                name: (quizAnswers.userName || "").trim(),
+                age: (quizAnswers.userAge || "").toString().trim(),
+                gender: quizAnswers.userGender || "",
+                college: (quizAnswers.userCollege || "").trim(),
+                college_norm: norm(quizAnswers.userCollege),
+                major: (quizAnswers.userMajor || "").trim(),
+                major_norm: norm(quizAnswers.userMajor),
+                instagram: (quizAnswers.userInstagram || "").trim().replace(/^@/, ""),
+                year: quizAnswers.userYear || "",
+                dorm: (quizAnswers.userDorm || "").trim(),
+                dorm_norm: norm(quizAnswers.userDorm),
+                dorm_gender_rule: quizAnswers.dormGenderRule || "",
+                room_type: quizAnswers.userRoomType === "single" ? "any" : (quizAnswers.userRoomType || ""),
+                sleep_schedule: quizAnswers.sleepSchedule || "",
+                cleanliness: quizAnswers.cleanliness || "",
+                noise_tolerance: quizAnswers.noiseTolerance || "",
+                guest_preference: quizAnswers.guestPreference || "",
+                work_style: quizAnswers.workStyle || "",
+                habits: quizAnswers.habits || "",
+                pets: quizAnswers.pets || ""
+            };
+            localStorage.setItem("bunkd_instagram_" + session.user.id, profile.instagram || "");
+
+            // only overwrite photo_url if they uploaded a new one this time
+            if (photoUrl) profile.photo_url = photoUrl;
+
+            // required-field check
+            var requiredFields = ["name", "age", "gender", "college", "major", "year", "dorm", "dorm_gender_rule"];
+            for (var i = 0; i < requiredFields.length; i++) {
+                if (!profile[requiredFields[i]]) {
+                    document.getElementById("questionnaireStatus").innerHTML =
+                        "Please go back and fill in all required questions.";
+                    return;
+                }
+            }
+
+            var saveProfileData = profile;
+            var saveResult = await supabaseClient
+                .from("profiles")
+                .upsert([saveProfileData], { onConflict: "user_id" });
+            var error = saveResult.error;
+
+            // if supabase cache has not found instagram yet, save without it for now
+            if (error && error.message && error.message.indexOf("'instagram' column") !== -1) {
+                delete saveProfileData.instagram;
+                saveResult = await supabaseClient
+                    .from("profiles")
+                    .upsert([saveProfileData], { onConflict: "user_id" });
+                error = saveResult.error;
+            }
+
+            if (error) {
+                if (error.message && error.message.indexOf("dorm_gender_rule") !== -1) {
+                    document.getElementById("questionnaireStatus").innerHTML =
+                        "Error saving: add a dorm_gender_rule text column to your profiles table, then try again.";
+                    return;
+                }
+                document.getElementById("questionnaireStatus").innerHTML = "Error saving: " + error.message;
+                return;
+            }
+
+            document.getElementById("questionnaireStatus").innerHTML = "Profile saved!";
+            setTimeout(checkQuestionnaireState, 800);
+        }
+
+        // questionnaire status - decides whether to show form or saved view
+        async function checkQuestionnaireState() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session) return;
+
+            // if user just clicked Retake Quiz, force form view and skip the check
+            if (inRetakeMode) {
+                inRetakeMode = false;
+                document.getElementById("questionnaireSaved").style.display = "none";
+                document.getElementById("questionnaireFormWrap").style.display = "block";
+                quizIndex = 0;
+                renderQuizCard();
+                return;
+            }
+
+            const { data } = await supabaseClient
+                .from("profiles")
+                .select("user_id")
+                .eq("user_id", session.user.id)
+                .limit(1);
+
+            var hasProfile = data && data.length > 0;
+            document.getElementById("questionnaireSaved").style.display = hasProfile ? "block" : "none";
+            document.getElementById("questionnaireFormWrap").style.display = hasProfile ? "none" : "block";
+
+            if (!hasProfile) {
+                quizIndex = 0;
+                quizAnswers = {};
+                renderQuizCard();
+            }
+        }
+        
+        // profile page updates
+        async function loadProfilePage() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session) {
+                document.getElementById("profileContent").innerHTML = "Please log in.";
+                return;
+            }
+
+            const { data } = await supabaseClient
+                .from("profiles").select("*")
+                .eq("user_id", session.user.id).limit(1);
+
+            if (!data || data.length === 0) {
+                document.getElementById("profileContent").innerHTML =
+                    "You haven't filled out your questionnaire yet! " +
+                    "<input type='button' value='Take quiz' onclick='showPage(\"questionnaire\")'>";
+                return;
+            }
+
+            var p = data[0];
+            if (!p.instagram) p.instagram = localStorage.getItem("bunkd_instagram_" + session.user.id) || "";
+            document.getElementById("profileContent").innerHTML = buildProfileCard(p, session.user.email, null, null);
+        }
+
+        // reusable card builder for both Profile page and Match detail
+        function buildProfileCard(p, email, score, radarSvg) {
+            var avatar = p.photo_url
+                ? "<img src='" + p.photo_url + "' class='profile-avatar'>"
+                : "<div class='profile-avatar profile-avatar-empty'></div>";
+
+            var headline = "<h3 class='profile-name'>" +
+                (p.name || "Anonymous") + (p.age ? " · " + p.age : "") + "</h3>";
+
+            var subline = email
+                ? "<p class='profile-sub'>" + email + "</p>"
+                : "";
+
+            var instagramName = (p.instagram || "").trim().replace(/^@/, "");
+            var instagramIcon = "<svg viewBox='0 0 24 24' width='18' height='18' aria-hidden='true'><rect x='3' y='3' width='18' height='18' rx='5' fill='none' stroke='currentColor' stroke-width='2'></rect><circle cx='12' cy='12' r='4' fill='none' stroke='currentColor' stroke-width='2'></circle><circle cx='17.5' cy='6.5' r='1.3' fill='currentColor'></circle></svg>";
+            var instagram = instagramName
+                ? "<p class='profile-instagram'><a class='ig-link' href='https://instagram.com/" + instagramName + "' target='_blank'>" + instagramIcon + "<span>@" + instagramName + "</span></a></p>"
+                : "";
+
+            // compatibility donut + radar combo for match detail
+            var compatBlock = "";
+            if (score !== null && score !== undefined) {
+                compatBlock = "<div class='compat-row'>" +
+                    "<div class='compat-donut'>" + buildDonut(score) + "</div>" +
+                    (radarSvg ? "<div class='compat-radar'>" + radarSvg + "</div>" : "") +
+                "</div>";
+            }
+
+            function pill(label, value) {
+                if (!value || value === ":") return "";
+                return "<span class='profile-pill'>" +
+                    "<span class='profile-pill-label'>" + label + "</span>" +
+                    "<strong>" + value + "</strong></span>";
+            }
+
+            function section(title, pills) {
+                var content = pills.filter(Boolean).join("");
+                if (!content) return "";
+                return "<div class='profile-section'>" +
+                    "<div class='profile-section-title'>" + title + "</div>" +
+                    "<div>" + content + "</div>" +
+                "</div>";
+            }
+
+            var aboutPills = [
+                pill("Gender", formatLabel(p.gender)),
+                pill("Year", formatLabel(p.year)),
+                pill("College", p.college),
+                pill("Major", p.major)
+            ];
+
+            var housingPills = [
+                pill("Dorm", p.dorm),
+                pill("Dorm rule", formatLabel(p.dorm_gender_rule)),
+                pill("Room", formatLabel(p.room_type))
+            ];
+
+            var lifestylePills = [
+                pill("Sleep", formatLabel(p.sleep_schedule)),
+                pill("Cleanliness", formatLabel(p.cleanliness)),
+                pill("Noise", formatLabel(p.noise_tolerance)),
+                pill("Guests", formatLabel(p.guest_preference)),
+                pill("Study", formatLabel(p.work_style)),
+                pill("Habits", formatLabel(p.habits)),
+                pill("Pets", p.pets === "yes" ? "Loves pets" : p.pets === "no" ? "No pets" : "")
+            ];
+
+            return "<div class='profile-card'>" +
+                avatar + headline + subline + instagram + compatBlock +
+                section("About", aboutPills) +
+                section("Housing", housingPills) +
+                section("Lifestyle", lifestylePills) +
+            "</div>";
+        }
+
+        // minimalist donut chart for overall % match
+        function buildDonut(score) {
+            var size = 120;
+            var stroke = 12;
+            var radius = (size - stroke) / 2;
+            var circ = 2 * Math.PI * radius;
+            var offset = circ - (score / 100) * circ;
+            var cx = size / 2;
+            var cy = size / 2;
+
+            return "<svg viewBox='0 0 " + size + " " + size + "' width='" + size + "' height='" + size + "'>" +
+                "<circle cx='" + cx + "' cy='" + cy + "' r='" + radius + "' fill='none' stroke='var(--accent-pale)' stroke-width='" + stroke + "'></circle>" +
+                "<circle cx='" + cx + "' cy='" + cy + "' r='" + radius + "' fill='none' stroke='var(--accent)' stroke-width='" + stroke + "' " +
+                "stroke-dasharray='" + circ + "' stroke-dashoffset='" + offset + "' " +
+                "stroke-linecap='round' transform='rotate(-90 " + cx + " " + cy + ")'></circle>" +
+                "<text x='" + cx + "' y='" + (cy + 2) + "' text-anchor='middle' dominant-baseline='middle' " +
+                "font-size='22' font-weight='800' fill='var(--accent)' font-family='Inter,sans-serif'>" + score + "%</text>" +
+                "<text x='" + cx + "' y='" + (cy + 22) + "' text-anchor='middle' dominant-baseline='middle' " +
+                "font-size='10' font-weight='600' fill='var(--muted)' font-family='Inter,sans-serif' letter-spacing='1'>MATCH</text>" +
+            "</svg>";
+        }
+
+        // radar chart - 6 axes showing lifestyle overlap
+        // values are 0-3 scale based on similarity per axis
+        function buildRadar(me, other) {
+            var axes = [
+                { label: "Sleep", a: me.sleep_schedule, b: other.sleep_schedule, kind: "scale3" },
+                { label: "Clean", a: me.cleanliness, b: other.cleanliness, kind: "scale3" },
+                { label: "Noise", a: me.noise_tolerance, b: other.noise_tolerance, kind: "scale3" },
+                { label: "Guests", a: me.guest_preference, b: other.guest_preference, kind: "scale3" },
+                { label: "Study", a: me.work_style, b: other.work_style, kind: "scale3" },
+                { label: "Habits", a: me.habits, b: other.habits, kind: "scale3" }
+            ];
+
+            // scoring: 3 = exact match, 2 = one is middle/flex, 1 = different, 0 = missing
+            function similarity(axis) {
+                if (!axis.a || !axis.b) return 0;
+                if (axis.a === axis.b) return 3;
+                var middles = ["medium", "balanced", "sometimes", "flexible"];
+                if (middles.indexOf(axis.a) !== -1 || middles.indexOf(axis.b) !== -1) return 2;
+                return 1;
+            }
+
+            var size = 200;
+            var cx = size / 2;
+            var cy = size / 2;
+            var radius = 70;
+            var n = axes.length;
+
+            // background polygon rings
+            var rings = "";
+            for (var r = 1; r <= 3; r++) {
+                var ringR = (radius / 3) * r;
+                var pts = [];
+                for (var i = 0; i < n; i++) {
+                    var angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+                    pts.push((cx + Math.cos(angle) * ringR) + "," + (cy + Math.sin(angle) * ringR));
+                }
+                rings += "<polygon points='" + pts.join(" ") + "' fill='none' stroke='var(--accent-pale)' stroke-width='1'></polygon>";
+            }
+
+            // axis lines and labels
+            var axisLines = "";
+            var labels = "";
+            for (var i = 0; i < n; i++) {
+                var angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+                var lx = cx + Math.cos(angle) * radius;
+                var ly = cy + Math.sin(angle) * radius;
+                axisLines += "<line x1='" + cx + "' y1='" + cy + "' x2='" + lx + "' y2='" + ly + "' stroke='var(--accent-pale)' stroke-width='1'></line>";
+
+                var labelR = radius + 16;
+                var labelX = cx + Math.cos(angle) * labelR;
+                var labelY = cy + Math.sin(angle) * labelR + 4;
+                labels += "<text x='" + labelX + "' y='" + labelY + "' text-anchor='middle' font-size='10' font-weight='700' fill='var(--muted)' font-family='Inter,sans-serif' letter-spacing='0.5'>" + axes[i].label.toUpperCase() + "</text>";
+            }
+
+            // data polygon
+            var dataPts = [];
+            for (var i = 0; i < n; i++) {
+                var sim = similarity(axes[i]);
+                var r = (radius / 3) * sim;
+                var angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+                dataPts.push((cx + Math.cos(angle) * r) + "," + (cy + Math.sin(angle) * r));
+            }
+            var dataPolygon = "<polygon points='" + dataPts.join(" ") + "' fill='var(--accent)' fill-opacity='0.22' stroke='var(--accent)' stroke-width='2' stroke-linejoin='round'></polygon>";
+
+            // dots at each axis point
+            var dots = "";
+            for (var i = 0; i < n; i++) {
+                var sim = similarity(axes[i]);
+                var r = (radius / 3) * sim;
+                var angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+                var dx = cx + Math.cos(angle) * r;
+                var dy = cy + Math.sin(angle) * r;
+                dots += "<circle cx='" + dx + "' cy='" + dy + "' r='3' fill='var(--accent)'></circle>";
+            }
+
+            return "<svg viewBox='0 0 " + size + " " + size + "' width='" + size + "' height='" + size + "'>" +
+                rings + axisLines + dataPolygon + dots + labels +
+            "</svg>";
+        }
+
+        // retake quiz option - prefills answers from existing profile
+        async function retakeQuiz() {
+            inRetakeMode = true;
+
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session) return;
+
+            const { data } = await supabaseClient
+                .from("profiles").select("*")
+                .eq("user_id", session.user.id).limit(1);
+
+            // prefill quizAnswers from saved profile
+            if (data && data[0]) {
+                var p = data[0];
+                quizAnswers = {
+                    userName: p.name || "",
+                    userAge: p.age || "",
+                    userGender: p.gender || "",
+                    userCollege: p.college || "",
+                    userMajor: p.major || "",
+                    userInstagram: p.instagram || localStorage.getItem("bunkd_instagram_" + session.user.id) || "",
+                    userYear: p.year || "",
+                    userDorm: p.dorm || "",
+                    dormGenderRule: p.dorm_gender_rule || "",
+                    userRoomType: p.room_type || "",
+                    sleepSchedule: p.sleep_schedule || "",
+                    cleanliness: p.cleanliness || "",
+                    noiseTolerance: p.noise_tolerance || "",
+                    guestPreference: p.guest_preference || "",
+                    workStyle: p.work_style || "",
+                    habits: p.habits || "",
+                    pets: p.pets || ""
+                };
+            } else {
+                quizAnswers = {};
+            }
+
+            quizIndex = 0;
+            document.getElementById("questionnaireSaved").style.display = "none";
+            document.getElementById("questionnaireFormWrap").style.display = "block";
+            renderQuizCard();
+            showPage("questionnaire");
+        }
+
+        function normalizeMatchText(value) {
+            return (value || "").trim().toLowerCase();
+        }
+
+        function normalizeDormText(value) {
+            return normalizeMatchText(value)
+                .replace(/&/g, " and ")
+                .replace(/['’]/g, "")
+                .replace(/[^a-z0-9]+/g, " ")
+                .replace(/\s+/g, " ")
+                .trim();
+        }
+
+        function getDormTokens(value) {
+            var fillerWords = {
+                hall: true,
+                halls: true,
+                dorm: true,
+                dormitory: true,
+                residence: true,
+                residential: true,
+                house: true,
+                court: true,
+                building: true,
+                center: true,
+                campus: true,
+                the: true
+            };
+
+            return normalizeDormText(value)
+                .split(" ")
+                .filter(function(token) {
+                    return token && !fillerWords[token];
+                });
+        }
+
+        function dormNamesAreSimilar(a, b) {
+            var dormA = normalizeDormText(a);
+            var dormB = normalizeDormText(b);
+            if (!dormA || !dormB) return false;
+            if (dormA === dormB) return true;
+            if (dormA === "any" || dormB === "any") return true;
+
+            var tokensA = getDormTokens(dormA);
+            var tokensB = getDormTokens(dormB);
+            if (tokensA.length === 0 || tokensB.length === 0) return false;
+
+            var setB = {};
+            tokensB.forEach(function(token) { setB[token] = true; });
+
+            var shared = 0;
+            tokensA.forEach(function(token) {
+                if (setB[token]) shared++;
+            });
+
+            var shorterCount = Math.min(tokensA.length, tokensB.length);
+            if (shared === shorterCount && shorterCount > 0) return true;
+
+            var overlap = shared / Math.max(tokensA.length, tokensB.length);
+            return overlap >= 0.67;
+        }
+
+        function normalizeRoomType(value) {
+            return value === "single" ? "any" : value;
+        }
+
+        function isSameSchool(me, other) {
+            var myCollege = normalizeMatchText(me.college_norm || me.college);
+            var otherCollege = normalizeMatchText(other.college_norm || other.college);
+            return myCollege !== "" && myCollege === otherCollege;
+        }
+
+        function isSameDormHall(me, other) {
+            return dormNamesAreSimilar(me.dorm_norm || me.dorm, other.dorm_norm || other.dorm);
+        }
+
+        function isDormGenderRuleMatch(me, other) {
+            if (!me.dorm_gender_rule || !other.dorm_gender_rule) return false;
+            if (me.dorm_gender_rule !== other.dorm_gender_rule) return false;
+            if (me.dorm_gender_rule === "unisex") return true;
+            return me.gender && other.gender && me.gender === other.gender;
+        }
+
+        function getMatchEligibility(me, other) {
+            if (!isSameSchool(me, other)) {
+                return { ok: false, reason: "different school" };
+            }
+            if (!isSameDormHall(me, other)) {
+                return { ok: false, reason: "different dorm hall" };
+            }
+            if (!isDormGenderRuleMatch(me, other)) {
+                return { ok: false, reason: "dorm gender rule" };
+            }
+            return { ok: true, reason: "" };
+        }
+
+        // matching algorithm
+        // School, dorm hall, and dorm gender rule are required before scoring.
+        // total = 100 pts
+        // College 25 | Dorm 20 | Year 10 | Room type 5 | Sleep 10 | Cleanliness 10
+        // Noise 5 | Guests 5 | Work style 4 | Habits 3 | Pets 3 | Major bonus 5
+        function scoreProfiles(me, other) {
+            var score = 0;
+            var reasons = [];
+            var misses = [];
+
+            score += 25;
+            reasons.push("Same college (" + other.college + ")");
+
+            if (me.dorm_gender_rule === "unisex") {
+                reasons.push("Compatible unisex dorm");
+            } else if (me.dorm_gender_rule === "singleGender") {
+                reasons.push("Compatible one-gender dorm");
+            }
+
+            // Dorm (20 pts) - "any" matches with anything for half points
+            var myDorm = normalizeMatchText(me.dorm_norm || me.dorm);
+            var otherDorm = normalizeMatchText(other.dorm_norm || other.dorm);
+            if (myDorm && otherDorm) {
+                if (myDorm === otherDorm) {
+                    score += 20;
+                    reasons.push("Same dorm preference (" + other.dorm + ")");
+                } else if (myDorm === "any" || otherDorm === "any") {
+                    score += 10;
+                    reasons.push("One of you is flexible on dorm");
+                } else if (dormNamesAreSimilar(me.dorm || me.dorm_norm, other.dorm || other.dorm_norm)) {
+                    score += 20;
+                    reasons.push("Similar dorm preference (" + other.dorm + ")");
+                } else {
+                    misses.push("Different dorm preferences (" + me.dorm + " vs " + other.dorm + ")");
+                }
+            }
+
+            // Year (10 pts) - adjacent years still get points
+            if (me.year && other.year) {
+                var yearOrder = ["freshman", "sophomore", "junior", "senior", "grad"];
+                var diff = Math.abs(yearOrder.indexOf(me.year) - yearOrder.indexOf(other.year));
+                if (diff === 0) {
+                    score += 10;
+                    reasons.push("Same year (" + formatLabel(me.year) + ")");
+                } else if (diff === 1) {
+                    score += 5;
+                    reasons.push("Close in year");
+                } else {
+                    misses.push("Different years (" + formatLabel(me.year) + " vs " + formatLabel(other.year) + ")");
+                }
+            }
+
+            // Room type (5 pts)
+            var myRoomType = normalizeRoomType(me.room_type);
+            var otherRoomType = normalizeRoomType(other.room_type);
+            if (myRoomType && otherRoomType) {
+                if (myRoomType === otherRoomType || myRoomType === "any" || otherRoomType === "any") {
+                    score += 5;
+                    reasons.push("Compatible room type preference");
+                } else {
+                    misses.push("Different room type preferences");
+                }
+            }
+
+            // Sleep schedule (10 pts)
+            if (me.sleep_schedule && other.sleep_schedule) {
+                if (me.sleep_schedule === other.sleep_schedule) {
+                    score += 10;
+                    reasons.push("Same sleep schedule (" + formatLabel(me.sleep_schedule) + ")");
+                } else if (me.sleep_schedule === "medium" || other.sleep_schedule === "medium") {
+                    score += 5;
+                    reasons.push("Flexible sleep schedules - you're likely compatible");
+                } else {
+                    misses.push("Different sleep schedules");
+                }
+            }
+
+            // Cleanliness (10 pts)
+            if (me.cleanliness && other.cleanliness) {
+                if (me.cleanliness === other.cleanliness) {
+                    score += 10;
+                    reasons.push("Same cleanliness level (" + formatLabel(me.cleanliness) + ")");
+                } else if (me.cleanliness === "medium" || other.cleanliness === "medium") {
+                    score += 5;
+                    reasons.push("Similar cleanliness standards");
+                } else {
+                    misses.push("Cleanliness habits differ significantly");
+                }
+            }
+
+            // Noise tolerance (5 pts)
+            if (me.noise_tolerance && other.noise_tolerance) {
+                if (me.noise_tolerance === other.noise_tolerance) {
+                    score += 5;
+                    reasons.push("Same noise tolerance");
+                } else if (me.noise_tolerance === "medium" || other.noise_tolerance === "medium") {
+                    score += 2;
+                } else {
+                    misses.push("Different noise tolerance levels");
+                }
+            }
+
+            // Guest preference (5 pts)
+            if (me.guest_preference && other.guest_preference) {
+                if (me.guest_preference === other.guest_preference) {
+                    score += 5;
+                    reasons.push("Same guest preferences");
+                } else if (me.guest_preference === "sometimes" || other.guest_preference === "sometimes") {
+                    score += 2;
+                } else {
+                    misses.push("Different guest preferences");
+                }
+            }
+
+            // Work style (4 pts)
+            if (me.work_style && other.work_style) {
+                if (me.work_style === other.work_style) {
+                    score += 4;
+                    reasons.push("Same work/study style");
+                } else if (me.work_style === "flexible" || other.work_style === "flexible") {
+                    score += 2;
+                } else {
+                    misses.push("Different study styles");
+                }
+            }
+
+            // Habits (3 pts)
+            if (me.habits && other.habits) {
+                if (me.habits === other.habits) {
+                    score += 3;
+                } else {
+                    misses.push("Different smoking/drinking habits");
+                }
+            }
+
+            // Pets (3 pts)
+            if (me.pets && other.pets) {
+                if (me.pets === other.pets) {
+                    score += 3;
+                } else {
+                    misses.push("Different pet preferences");
+                }
+            }
+
+            // bonus: same major gets a small boost
+            if (me.major_norm && other.major_norm && me.major_norm === other.major_norm) {
+                score += 5;
+                reasons.push("Same major (" + other.major + ")");
+            }
+
+            return { score: Math.min(score, 100), reasons: reasons, misses: misses };
+        }
+
+        function formatLabel(val) {
+            var map = {
+                early: "Early sleeper",
+                medium: "Flexible",
+                late: "Late sleeper",
+                low: "Low",
+                high: "High",
+                rarely: "Rarely",
+                sometimes: "Sometimes",
+                often: "Often",
+                quiet: "Quiet workspace",
+                balanced: "Balanced",
+                flexible: "Flexible",
+                none: "None",
+                occasional: "Occasional",
+                frequent: "Frequent",
+                yes: "Loves pets",
+                no: "No pets",
+                female: "Female",
+                male: "Male",
+                nonbinary: "Non-binary",
+                preferNot: "Prefer not to say",
+                freshman: "Freshman",
+                sophomore: "Sophomore",
+                junior: "Junior",
+                senior: "Senior",
+                grad: "Grad student",
+                single: "No preference",
+                double: "Double",
+                triple: "Triple",
+                quad: "Quad",
+                unisex: "Unisex / co-ed",
+                singleGender: "One gender only",
+                any: "No preference"
+            };
+            return map[val] || val;
+        }
+
+        async function loadMatches() {
+            var statusEl = document.getElementById("matchStatus");
+            var listEl = document.getElementById("matchList");
+
+            statusEl.innerHTML = "Finding your matches...";
+            listEl.innerHTML = "";
+
+            const { data: { session } } = await supabaseClient.auth.getSession();
+
+            if (!session) {
+                statusEl.innerHTML = "Please log in first.";
+                return;
+            }
+            currentUserId = session.user.id;
+
+            const { data: myData, error: myError } = await supabaseClient
+                .from("profiles")
+                .select("*")
+                .eq("user_id", session.user.id)
+                .limit(1);
+
+            if (myError || !myData || myData.length === 0) {
+                statusEl.innerHTML = "You haven't filled out your questionnaire yet. Go to Questionnaire first.";
+                return;
+            }
+
+            var me = myData[0];
+            if (!me.dorm_gender_rule) {
+                window.currentMatches = [];
+                window.currentMe = me;
+                window.currentSwipeIndex = 0;
+                renderMatchDeck();
+                statusEl.innerHTML = "Please retake the questionnaire and answer the new dorm rule question before viewing matches.";
+                return;
+            }
+
+            const { data: others, error: othersError } = await supabaseClient
+                .from("profiles")
+                .select("*")
+                .neq("user_id", session.user.id);
+
+            if (othersError) {
+                statusEl.innerHTML = "Error loading matches: " + othersError.message;
+                return;
+            }
+
+            if (!others || others.length === 0) {
+                statusEl.innerHTML = "No other users have signed up yet. Check back soon!";
+                return;
+            }
+
+            var unlockedIds = getUnlockedMatches();
+            var reviewableProfiles = others.filter(function(other) {
+                return unlockedIds.indexOf(other.user_id) === -1 && getMatchEligibility(me, other).ok;
+            });
+
+            if (reviewableProfiles.length === 0) {
+                window.currentMatches = [];
+                window.currentMe = me;
+                window.currentSwipeIndex = 0;
+                renderMatchDeck();
+                statusEl.innerHTML = "No eligible profiles right now. Matches must be at your school, in a compatible dorm hall, and follow the same dorm gender rule.";
+                return;
+            }
+
+            var scored = reviewableProfiles.map(function(other) {
+                var result = scoreProfiles(me, other);
+                return {
+                    profile: other,
+                    score: result.score,
+                    reasons: result.reasons,
+                    misses: result.misses
+                };
+            }).sort(function(a, b) {
+                return b.score - a.score;
+            });
+
+            statusEl.innerHTML = "Found <strong>" + scored.length + "</strong> profile" + (scored.length !== 1 ? "s" : "") + " to review.";
+
+            var html = "";
+
+            scored.forEach(function(m, i) {
+                var photoHtml = m.profile.photo_url
+                    ? "<img src='" + m.profile.photo_url + "' class='match-card-photo'>"
+                    : "<div class='match-card-photo match-card-photo-empty'></div>";
+
+                var topReasons = m.reasons.slice(0, 2).join(" · ");
+
+                html +=
+                    "<div class='match-card' onclick='showMatchDetail(" + i + ")'>" +
+                        photoHtml +
+                        "<div class='match-card-body'>" +
+                            "<div class='match-card-name'>" + (m.profile.name || "Anonymous") + (m.profile.age ? ", " + m.profile.age : "") + "</div>" +
+                            "<div class='match-card-meta'>" + (formatLabel(m.profile.year) || "") + (m.profile.college ? " · " + m.profile.college : "") + "</div>" +
+                            (topReasons ? "<div class='match-card-reason'>" + topReasons + "</div>" : "") +
+                        "</div>" +
+                        "<div class='match-card-score'>" + buildMiniDonut(m.score) + "</div>" +
+                    "</div>";
+            });
+
+            listEl.innerHTML = html;
+            window.currentMatches = scored;
+            window.currentMe = me;
+            window.currentSwipeIndex = 0;
+            renderMatchDeck();
+        }
+
+        // tinder style match cards
+        function renderMatchDeck() {
+            var listEl = document.getElementById("matchList");
+            var statusEl = document.getElementById("matchStatus");
+            var actions = document.querySelector(".swipe-actions");
+            var matches = window.currentMatches || [];
+            var index = window.currentSwipeIndex || 0;
+
+            if (!listEl) return;
+
+            if (index >= matches.length) {
+                listEl.innerHTML = "<div class='empty-deck'><h3>No more profiles</h3><p>Check back when more people join.</p></div>";
+                if (statusEl) statusEl.innerHTML = "You reached the end for now.";
+                if (actions) actions.style.display = "none";
+                return;
+            }
+
+            if (actions) actions.style.display = "flex";
+
+            var m = matches[index];
+            var p = m.profile;
+            var photoHtml = p.photo_url
+                ? "<img src='" + p.photo_url + "' class='swipe-photo'>"
+                : "<div class='swipe-photo swipe-photo-empty'></div>";
+            var topReasons = m.reasons.slice(0, 3).join(" | ");
+
+            listEl.innerHTML =
+                "<div class='swipe-card' onclick='showMatchDetail(" + index + ")'>" +
+                    "<div class='swipe-card-top'>" +
+                        photoHtml +
+                        "<div class='swipe-score'>" + m.score + "%</div>" +
+                    "</div>" +
+                    "<div class='swipe-card-body'>" +
+                        "<h3>" + (p.name || "Anonymous") + (p.age ? ", " + p.age : "") + "</h3>" +
+                        "<p>" + (formatLabel(p.year) || "Student") + (p.college ? " | " + p.college : "") + "</p>" +
+                        "<div class='swipe-tags'>" +
+                            "<span>" + (formatLabel(p.sleep_schedule) || "Sleep") + "</span>" +
+                            "<span>" + (formatLabel(p.cleanliness) || "Cleanliness") + "</span>" +
+                            "<span>" + (p.dorm || "Dorm open") + "</span>" +
+                        "</div>" +
+                        (topReasons ? "<p class='swipe-reason'>" + topReasons + "</p>" : "") +
+                    "</div>" +
+                "</div>";
+
+            if (statusEl) statusEl.innerHTML = "Profile " + (index + 1) + " of " + matches.length;
+        }
+
+        // left passes, right matches and opens messages
+        function swipeMatch(direction) {
+            var matches = window.currentMatches || [];
+            var index = window.currentSwipeIndex || 0;
+            var m = matches[index];
+            var card = document.querySelector(".swipe-card");
+
+            if (!m) return;
+
+            if (direction === "right") {
+                if (card) card.classList.add("swipe-card-right");
+                setTimeout(function() {
+                    saveUnlockedMatch(m.profile.user_id);
+                    window.currentMatches.splice(index, 1);
+                    window.currentSwipeIndex = index;
+                    window.activeMatchUserId = m.profile.user_id;
+                    window.activeMatchUserName = m.profile.name || "User";
+                    showPage("messages");
+                    setTimeout(function() {
+                        loadChatSidebar().then(function() {
+                            openChat(window.activeMatchUserId, window.activeMatchUserName);
+                        });
+                    }, 120);
+                }, 260);
+                return;
+            }
+
+            if (card) card.classList.add("swipe-card-left");
+            setTimeout(function() {
+                window.currentSwipeIndex = index + 1;
+                renderMatchDeck();
+            }, 260);
+        }
+
+        // save who you matched with
+        function getMatchStorageKey() {
+            return currentUserId ? "bunkd_matches_" + currentUserId : "bunkd_matches_guest";
+        }
+
+        function getUnlockedMatches() {
+            return JSON.parse(localStorage.getItem(getMatchStorageKey()) || "[]");
+        }
+
+        function saveUnlockedMatch(userId) {
+            var saved = getUnlockedMatches();
+            if (saved.indexOf(userId) === -1) {
+                saved.push(userId);
+                localStorage.setItem(getMatchStorageKey(), JSON.stringify(saved));
+            }
+        }
+
+        // small donut shown in match list cards
+        function buildMiniDonut(score) {
+            var size = 54;
+            var stroke = 6;
+            var radius = (size - stroke) / 2;
+            var circ = 2 * Math.PI * radius;
+            var offset = circ - (score / 100) * circ;
+            var cx = size / 2;
+            var cy = size / 2;
+
+            return "<svg viewBox='0 0 " + size + " " + size + "' width='" + size + "' height='" + size + "'>" +
+                "<circle cx='" + cx + "' cy='" + cy + "' r='" + radius + "' fill='none' stroke='var(--accent-pale)' stroke-width='" + stroke + "'></circle>" +
+                "<circle cx='" + cx + "' cy='" + cy + "' r='" + radius + "' fill='none' stroke='var(--accent)' stroke-width='" + stroke + "' " +
+                "stroke-dasharray='" + circ + "' stroke-dashoffset='" + offset + "' " +
+                "stroke-linecap='round' transform='rotate(-90 " + cx + " " + cy + ")'></circle>" +
+                "<text x='" + cx + "' y='" + (cy + 4) + "' text-anchor='middle' dominant-baseline='middle' " +
+                "font-size='13' font-weight='800' fill='var(--accent)' font-family='Inter,sans-serif'>" + score + "</text>" +
+            "</svg>";
+        }
+
+        function showMatchDetail(index) {
+            var m = window.currentMatches[index];
+            var p = m.profile;
+            var me = window.currentMe;
+
+            window.activeMatchUserId = p.user_id;
+            window.activeMatchUserName = p.name || "User";
+
+            var radarSvg = buildRadar(me, p);
+            var html = buildProfileCard(p, null, m.score, radarSvg);
+
+            if (m.reasons.length > 0 || m.misses.length > 0) {
+                html += "<div class='match-breakdown'>";
+
+                if (m.reasons.length > 0) {
+                    html += "<div class='breakdown-title'>Why you matched</div>";
+                    html += "<ul class='breakdown-list breakdown-good'>";
+                    m.reasons.forEach(function(r) { html += "<li>" + r + "</li>"; });
+                    html += "</ul>";
+                }
+                if (m.misses.length > 0) {
+                    html += "<div class='breakdown-title' style='margin-top:18px;'>Talk about these</div>";
+                    html += "<ul class='breakdown-list breakdown-warn'>";
+                    m.misses.forEach(function(r) { html += "<li>" + r + "</li>"; });
+                    html += "</ul>";
+                }
+                html += "</div>";
+            }
+
+            document.getElementById("matchDetailContent").innerHTML = html;
+            showPage("matchDetail");
+        }
+
+       // chat functionality through supabase
+       var activeChatUser = null;       // user_id of who you're chatting with
+       var activeChatName = null;       // their display name
+       var currentUserId = null;        // user_id of the logged-in user
+       var currentMatches = [];
+       var realtimeChannel = null;      // holds the live subscription
+
+        // Message Match button - go to messages and open chat with this match
+        async function messageMatch() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session) {
+                showPage("home");
+                return;
+            }
+            currentUserId = session.user.id;
+            if (!window.activeMatchUserId || getUnlockedMatches().indexOf(window.activeMatchUserId) === -1) {
+                document.getElementById("matchStatus").innerHTML = "Swipe right to match before messaging.";
+                showPage("matches");
+                return;
+            }
+            showPage("messages");
+            await loadChatSidebar();
+            if (window.activeMatchUserId) {
+                openChat(window.activeMatchUserId, window.activeMatchUserName);
+            }
+        }
+
+        // Build sidebar from matched users
+        async function loadChatSidebar() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session) return;
+            currentUserId = session.user.id;
+            var unlockedIds = getUnlockedMatches();
+
+            var sidebar = document.getElementById("chatSidebar");
+            if (unlockedIds.length === 0) {
+                sidebar.innerHTML = "<p style='color:var(--muted); font-size:0.9em; padding:6px;'>No matches yet. Swipe right first.</p>";
+                return;
+            }
+
+            // pull profiles you swiped right on
+            const { data: profiles, error } = await supabaseClient
+                .from("profiles")
+                .select("user_id, name, photo_url")
+                .in("user_id", unlockedIds);
+
+            if (!profiles || profiles.length === 0) {
+                sidebar.innerHTML = "<p style='color:var(--muted); font-size:0.9em; padding:6px;'>No matches yet.</p>";
+                return;
+            }
+
+            var html = "";
+            profiles.forEach(function(p) {
+                var photo = p.photo_url
+                    ? "<img src='" + p.photo_url + "' class='chat-list-photo'>"
+                    : "<div class='chat-list-photo chat-list-photo-empty'></div>";
+                html += "<div class='chat-list-item' onclick='openChat(\"" + p.user_id + "\", \"" + (p.name || "User") + "\")'>" +
+                    photo + "<strong>" + (p.name || "User") + "</strong>" +
+                    "</div>";
+            });
+            sidebar.innerHTML = html;
+        }
+
+        // Open a chat with a specific user
+        async function openChat(userId, userName) {
+            if (getUnlockedMatches().indexOf(userId) === -1) {
+                document.getElementById("messageStatus").innerHTML = "You can only message after you match.";
+                return;
+            }
+
+            activeChatUser = userId;
+            activeChatName = userName;
+
+            document.getElementById("chatHeader").innerHTML = userName;
+            document.getElementById("messageStatus").innerHTML = "";
+
+            await loadMessages();
+            subscribeToMessages();
+        }
+
+        function escapeHtml(text) {
+            var div = document.createElement("div");
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function renderMessageHtml(m, myId, pending) {
+            var isMine = m.sender_id === myId;
+            var time = m.created_at
+                ? new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                : "Sending";
+
+            return "<div class='msg-row " + (isMine ? "msg-row-mine" : "msg-row-theirs") + "' style='opacity:" + (pending ? "0.72" : "1") + ";'>" +
+                "<div class='msg-bubble " + (isMine ? "msg-bubble-mine" : "msg-bubble-theirs") + "'>" +
+                escapeHtml(m.content) +
+                "<div class='msg-time'>" + time + "</div>" +
+                "</div></div>";
+        }
+
+        function appendMessage(m, myId, pending) {
+            var out = document.getElementById("messageList");
+            if (!out) return;
+
+            if (out.innerHTML.indexOf("No messages yet") !== -1) {
+                out.innerHTML = "";
+            }
+
+            out.innerHTML += renderMessageHtml(m, myId, pending);
+            out.scrollTop = out.scrollHeight;
+        }
+
+        // Load messages between logged-in user and activeChatUser
+        async function loadMessages() {
+            if (!activeChatUser) return;
+
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session) return;
+
+            var myId = session.user.id;
+            currentUserId = myId;
+
+            const { data: msgs, error } = await supabaseClient
+                .from("messages")
+                .select("*")
+                .or(
+                    "and(sender_id.eq." + myId + ",receiver_id.eq." + activeChatUser + ")," +
+                    "and(sender_id.eq." + activeChatUser + ",receiver_id.eq." + myId + ")"
+                )
+                .order("created_at", { ascending: true });
+
+            var out = document.getElementById("messageList");
+            if (!msgs || msgs.length === 0) {
+                out.innerHTML = "<p style='color:var(--muted);'>No messages yet. Say hi!</p>";
+                return;
+            }
+
+            var html = "";
+            msgs.forEach(function(m) {
+                html += renderMessageHtml(m, myId, false);
+            });
+            out.innerHTML = html;
+
+            // scroll to bottom
+            out.scrollTop = out.scrollHeight;
+        }
+
+        // Send a message
+        async function sendMessage() {
+            if (!activeChatUser) {
+                document.getElementById("messageStatus").innerHTML = "Select a match first!";
+                return;
+            }
+
+            if (getUnlockedMatches().indexOf(activeChatUser) === -1) {
+                document.getElementById("messageStatus").innerHTML = "You can only message after you match.";
+                return;
+            }
+
+            var msgBox = document.getElementById("messageInput");
+            var msg = msgBox.value.trim();
+
+            if (msg === "") {
+                document.getElementById("messageStatus").innerHTML = "Type something first!";
+                return;
+            }
+
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session) return;
+            currentUserId = session.user.id;
+
+            var optimisticMessage = {
+                sender_id: session.user.id,
+                receiver_id: activeChatUser,
+                content: msg,
+                created_at: new Date().toISOString()
+            };
+
+            msgBox.value = "";
+            document.getElementById("messageStatus").innerHTML = "";
+            appendMessage(optimisticMessage, session.user.id, true);
+
+            const { error } = await supabaseClient.from("messages").insert({
+                sender_id: session.user.id,
+                receiver_id: activeChatUser,
+                content: msg
+            });
+
+            if (error) {
+                document.getElementById("messageStatus").innerHTML = "Error sending: " + error.message;
+                msgBox.value = msg;
+                await loadMessages();
+                return;
+            }
+        }
+
+        // Live subscription - auto-refresh when new message arrives
+        function subscribeToMessages() {
+            // unsubscribe from previous channel if switching chats
+            if (realtimeChannel) {
+                supabaseClient.removeChannel(realtimeChannel);
+            }
+
+            realtimeChannel = supabaseClient
+                .channel("messages-live")
+                .on("postgres_changes", {
+                    event: "INSERT",
+                    schema: "public",
+                    table: "messages"
+                }, function(payload) {
+                    var msg = payload.new;
+                    // only reload if it's relevant to the open chat
+                    if (
+                        (msg.sender_id === currentUserId && msg.receiver_id === activeChatUser) ||
+                        (msg.sender_id === activeChatUser && msg.receiver_id === currentUserId)
+                    ) {
+                        loadMessages();
+                    }
+                })
+                .subscribe();
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            updateAuthStatus();
+        });
+
+        supabaseClient.auth.onAuthStateChange(() => {
+            updateAuthStatus();
+        });
+
+        // validate form
+        function validate() {
+            if (document.getElementById("name").value.trim() == "") {
+                alert("Please enter your name!");
+                return false;
+            }
+
+            if (document.getElementById("email").value.trim() == "") {
+                alert("Please enter your email!");
+                return false;
+            }
+
+            if (document.getElementById("email").value.indexOf("@") == -1) {
+                alert("Please enter a valid email!");
+                return false;
+            }
+
+            if (document.getElementById("message").value.trim() == "") {
+                alert("Please enter a message!");
+                return false;
+            }
+
+            var entry = {
+                name: document.getElementById("name").value.trim(),
+                email: document.getElementById("email").value.trim(),
+                message: document.getElementById("message").value.trim(),
+                time: new Date().toLocaleString()
+            };
+
+            var saved = JSON.parse(localStorage.getItem("contacts") || "[]");
+            saved.push(entry);
+            localStorage.setItem("contacts", JSON.stringify(saved));
+            return true;
+        }
+
+        window.onload = async function () {
+            updateAuthStatus();
+        };
+    </script>
+</body>
+
+</html>
